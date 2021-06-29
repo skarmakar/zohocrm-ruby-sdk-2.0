@@ -102,7 +102,7 @@ class Constants
 
   SDK_VERSION = '1.0.0'
 
-  API_VERSION = '2.0'
+  ZOHO_API_VERSION = '2.0'
 
   SET_TO_CONTENT_TYPE = ['/crm/bulk/v2/read', '/crm/bulk/v2/write']
 

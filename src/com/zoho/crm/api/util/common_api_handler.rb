@@ -107,7 +107,7 @@ module Handler
       end
 
       begin
-        connector.headers[Constants::ZOHO_SDK] = RUBY_PLATFORM + ' Ruby-'+ Constants::API_VERSION +'/' + RUBY_VERSION + ':' + Constants::SDK_VERSION
+        connector.headers[Constants::ZOHO_SDK] = RUBY_PLATFORM + ' Ruby-' + Constants::ZOHO_API_VERSION + '/' + RUBY_VERSION + ':' + Constants::SDK_VERSION
 
         response = connector.fire_request(converter_instance)
 
