@@ -11,19 +11,19 @@ require_relative '../../crm/api/exception/sdk_exception'
 module Authenticator
   # This class gets and refreshes the tokens based on the expiry time.
   class OAuthToken < Token
+    attr_accessor :client_id , :client_secret ,:redirect_url ,:grant_token,:refresh_token, :access_token ,:user_mail ,:id ,:expires_in
     @@sync_lock = Monitor.new
-
-    attr_accessor :client_id, :client_secret, :redirect_url, :grant_token, :refresh_token, :access_token, :expires_in, :user_mail, :id
 
     # Creates an OAuthToken class instance with the specified parameters.
     # @param client_id [string] A String containing the OAuth client id.
     # @param client_secret [string] A String containing the OAuth client secret.
+    # @param grant_token [string]  A String containing the grant token.
+    # @param refresh_token [string] A String containing the refresh token.
     # @param redirect_url [string]  A String containing the OAuth redirect URL.
-    # @param token [string]  A String containing the REFRESH/GRANT token.
-    # @param type A TokenType module variable containing the type of given token.
-    def initialize(client_id, client_secret, token, type, redirect_url = nil)
-      error = {}
-
+    # @param id [string] A String containing ID
+    
+    def initialize(client_id:, client_secret:, grant_token: nil, refresh_token: nil, redirect_url: nil,id: nil)
+      error ={}
       unless client_id.is_a?(String)
         error[Constants::ERROR_HASH_FIELD] = Constants::CLIENT_ID
 
@@ -35,7 +35,7 @@ module Authenticator
 
       end
 
-      unless client_secret.nil? || client_secret.is_a?(String)
+      unless client_secret.is_a?(String)
         error[Constants::ERROR_HASH_FIELD] = Constants::CLIENT_SECRET
 
         error[Constants::ERROR_HASH_EXPECTED_TYPE] = String
@@ -46,8 +46,8 @@ module Authenticator
 
       end
 
-      unless token.is_a?(String)
-        error[Constants::ERROR_HASH_FIELD] = Constants::TOKEN
+      if !grant_token.nil? && !grant_token.is_a?(String)
+        error[Constants::ERROR_HASH_FIELD] = Constants::GRANT_TOKEN
 
         error[Constants::ERROR_HASH_EXPECTED_TYPE] = String
 
@@ -57,7 +57,40 @@ module Authenticator
 
       end
 
-      unless TokenType::REFRESH.to_s.equal?(TokenType.const_get(type.to_s)) || TokenType::GRANT.to_s.equal?(TokenType.const_get(type.to_s))
+      if !refresh_token.nil? && !refresh_token.is_a?(String)
+        error[Constants::ERROR_HASH_FIELD] = Constants::REFRESH_TOKEN
+
+        error[Constants::ERROR_HASH_EXPECTED_TYPE] = String
+
+        error[Constants::ERROR_HASH_CLASS] = OAuthToken.class
+
+        raise SDKException.new(Constants::INPUT_ERROR, nil, error, nil)
+
+      end
+
+      if !redirect_url.nil? && !redirect_url.is_a?(String)
+        error[Constants::ERROR_HASH_FIELD] = Constants::REDIRECT_URL
+
+        error[Constants::ERROR_HASH_EXPECTED_TYPE] = String
+
+        error[Constants::ERROR_HASH_CLASS] = OAuthToken.class
+
+        raise SDKException.new(Constants::INPUT_ERROR, nil, error, nil)
+
+      end
+
+      if !id.nil? && !id.is_a?(String)
+        error[Constants::ERROR_HASH_FIELD] = Constants::ID
+
+        error[Constants::ERROR_HASH_EXPECTED_TYPE] = String
+
+        error[Constants::ERROR_HASH_CLASS] = OAuthToken.class
+
+        raise SDKException.new(Constants::INPUT_ERROR, nil, error, nil)
+
+      end
+
+      if  grant_token.nil? && refresh_token.nil?
         error[Constants::ERROR_HASH_FIELD] = Constants::TYPE
 
         error[Constants::ERROR_HASH_EXPECTED_TYPE] = Constants::EXPECTED_TOKEN_TYPES
@@ -66,28 +99,39 @@ module Authenticator
 
         raise SDKException.new(Constants::INPUT_ERROR, nil, error, nil)
       end
-
       @client_id = client_id
 
       @client_secret = client_secret
 
       @redirect_url = redirect_url
 
-      @refresh_token = (type == TokenType::REFRESH) ? token : nil
+      @refresh_token = refresh_token
 
-      @grant_token = (type == TokenType::GRANT) ? token : nil
+      @grant_token = grant_token
+
+      @access_token = nil
+
+      @expires_in = nil
+
+      @user_mail = nil
+
+      @id = id
     end
-
+    
     def authenticate(url_connection)
       @@sync_lock.synchronize do
         initializer = Initializer.get_initializer
         store = initializer.store
-
         user = initializer.user
 
-        oauth_token = initializer.store.get_token(user, self)
+        oauth_token = nil
+        if !@id.nil?
+          oauth_token = initializer.store.get_token_by_id(@id, self)
+        else
+          oauth_token = initializer.store.get_token(user, self)
+        end
 
-        token = nil
+        token = ""
 
         if oauth_token.nil?
           token = @refresh_token.nil? ? generate_access_token(user, store).access_token : refresh_access_token(user, store).access_token
@@ -97,7 +141,6 @@ module Authenticator
         else
           token = oauth_token.access_token
         end
-
         url_connection.headers[Constants::AUTHORIZATION] = Constants::OAUTH_HEADER_PREFIX + token
       end
     end
@@ -115,8 +158,8 @@ module Authenticator
       json_body[Constants::CLIENT_ID] = @client_id
 
       json_body[Constants::CLIENT_SECRET] = @client_secret
-
-      json_body[Constants::REDIRECT_URI] = @redirect_url
+ 
+      json_body[Constants::REDIRECT_URI] = @redirect_url if !@redirect_url.nil?
 
       json_body[Constants::GRANT_TYPE] = Constants::GRANT_TYPE_AUTH_CODE
 
@@ -125,7 +168,11 @@ module Authenticator
       response = get_response_from_server(json_body)
 
       begin
-        store.save_token(user, parse_response(response))
+        parse_response(response)
+
+        generate_id()
+
+        store.save_token(user,self)
       rescue SDKException => e
         raise e
       rescue StandardError => e
@@ -141,7 +188,7 @@ module Authenticator
 
       json_body[Constants::CLIENT_SECRET] = @client_secret
 
-      json_body[Constants::REDIRECT_URI] = @redirect_url
+      json_body[Constants::REDIRECT_URI] = @redirect_url if !@redirect_url.nil?
 
       json_body[Constants::GRANT_TYPE] = Constants::REFRESH_TOKEN
 
@@ -150,7 +197,11 @@ module Authenticator
       response = get_response_from_server(json_body)
 
       begin
-        store.save_token(user, parse_response(response))
+        parse_response(response)
+
+        generate_id()
+
+        store.save_token(user,self)
       rescue SDKException => e
         raise e
       rescue StandardError => e
@@ -184,7 +235,7 @@ module Authenticator
       http.use_ssl = true
 
       request = Net::HTTP::Post.new(url.request_uri)
-
+      request.add_field(Constants::USER_AGENT_KEY, Constants::USER_AGENT)
       request.set_form(json_body, Constants::APPLICATION_FORM_URLENCODED)
 
       response = http.request(request)
@@ -207,11 +258,14 @@ module Authenticator
     def get_current_time_in_millis
       (Time.now.to_f * 1000).to_i
     end
-  end
-end
 
-# This module contains different types of token.
-module TokenType
-  GRANT = 'GRANT'.freeze
-  REFRESH = 'REFRESH'.freeze
+    def generate_id
+      id = ""
+      email = Initializer.get_initializer.user.email
+      environment = Initializer.get_initializer.environment.name
+      id = id + "ruby_" +email[0..email.index(Constants::AT) - 1] + Constants::UNDERSCORE
+      id = id + environment + Constants::UNDERSCORE + @refresh_token[@refresh_token.length-4..@refresh_token.length-1]
+      @id = id
+    end
+  end
 end

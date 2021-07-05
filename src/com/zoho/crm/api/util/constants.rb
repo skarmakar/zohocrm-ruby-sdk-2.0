@@ -26,6 +26,8 @@ class Constants
 
   RESPONSECODE_BAD_REQUEST = 400
 
+  JSON_DETAILS_ERROR = "ERROR IN READING JSONDETAILS FILE"
+
   RESPONSECODE_AUTHORIZATION_ERROR = 401
 
   RESPONSECODE_FORBIDDEN = 403
@@ -94,17 +96,73 @@ class Constants
 
   HTTP = 'http'
 
+  DEFAULT_MODULENAME_VS_APINAME = {
+
+    "leads" => "Leads",
+
+    "contacts" => "Contacts",
+
+    "accounts" => "Accounts",
+
+    "deals" => "Deals",
+
+    "tasks" => "Tasks",
+
+    "events" => "Events",
+
+    "activities" => "Activities",
+
+    "calls" => "Calls",
+
+    "products" => "Products",
+
+    "quotes" => "Quotes",
+
+    "sales_orders" => "Sales_Orders",
+
+    "purchase_orders" => "Purchase_Orders",
+
+    "invoices" => "Invoices",
+
+    "campaigns" => "Campaigns",
+
+    "vendors" => "Vendors",
+
+    "price_books" => "Price_Books",
+
+    "cases" => "Cases",
+
+    "solutions" => "Solutions",
+
+    "visits" => "Visits",
+
+    "approvals" => "Approvals",
+
+    "notes" => "Notes",
+
+    "attachments" => "Attachments",
+
+    "actions_performed" => "Actions_Performed",
+
+}
+
+  USER_AGENT = "Mozilla/5.0"
+  
+  USER_AGENT_KEY = "user-agent"
+
   CONTENT_API_URL = 'content.zohoapis.com'
 
   INVALID_URL_ERROR = 'Invalid URI Error'
 
   ZOHO_SDK = 'X-ZOHO-SDK'
 
-  SDK_VERSION = '1.0.0'
+  SDK_VERSION = '2.0.0'
 
   ZOHO_API_VERSION = '2.0'
 
-  SET_TO_CONTENT_TYPE = ['/crm/bulk/v2/read', '/crm/bulk/v2/write']
+  SET_CONTENT_TYPE_HEADER = ['/crm/bulk/v2/read', '/crm/bulk/v2/write']
+
+  RESOURCE_PATH_INVALID_ERROR_MESSAGE = "Resource Path MUST be a valid directory."
 
   IS_GENERATE_REQUEST_BODY =[REQUEST_METHOD_POST,REQUEST_METHOD_PUT,REQUEST_METHOD_PATCH]
 
@@ -114,9 +172,7 @@ class Constants
     
   CRM = "crm"
   
-  API_VERSION = "v2"
-
-  PHOTO_SUPPORTED_MODULES = ["leads", "contacts", "accounts", "products", "vendors"]
+  PHOTO_SUPPORTED_MODULES = ["leads", "contacts", "accounts", "products", "vendors", "deals", "cases", "solutions"]
 
   PARAMETER_NULL_ERROR = 'NULL PARAMETER ERROR'
 
@@ -144,9 +200,9 @@ class Constants
 
   NULL_VALUE_ERROR_MESSAGE = ' MUST NOT be null'
 
-  PARAM_INSTANCE_NULL_ERROR = 'Param<T> Instance MUST NOT be null'
+  PARAM_INSTANCE_NULL_ERROR = 'Param Instance MUST NOT be null'
 
-  HEADER_INSTANCE_NULL_ERROR = 'Header<T> Instance MUST NOT be null'
+  HEADER_INSTANCE_NULL_ERROR = 'Header Instance MUST NOT be null'
 
   SDK_UNINITIALIZATION_ERROR = 'SDK UNINITIALIZED ERROR'
 
@@ -170,6 +226,16 @@ class Constants
 
   EXPIRY_TIME = 'expiry_time'
 
+  PROXY_SETTINGS = "Proxy settings - "
+	
+	PROXY_HOST = "Host: "
+	
+	PROXY_PORT = "Port: "
+	
+	PROXY_USER = "User: "
+	
+	PROXY_DOMAIN = "Domain: "
+
   USER_MAIL_NULL_ERROR = 'USER MAIL NULL ERROR'
 
   USER_MAIL_NULL_ERROR_MESSAGE = 'User Mail MUST NOT be null. Use setUserMail() to set value.'
@@ -180,6 +246,10 @@ class Constants
 
   GET_TOKEN_DB_ERROR = 'Exception in get_token - DBStore:'
 
+  GET_TOKEN_BY_ID_DB_ERROR = "Exception in getTokenById - DBStore : Given ID is invalid"
+
+  GET_TOKEN_BY_ID_FILE_ERROR = "Exception in getTokenById - FileStore : Given ID is invalid"
+
   GET_TOKENS_DB_ERROR = 'Exception in get_tokens - DBStore:'
 
   DELETE_TOKEN_DB_ERROR = 'Exception in delete_token - DBStore:'
@@ -189,6 +259,8 @@ class Constants
   SAVE_TOKEN_DB_ERROR = 'Exception in save_token - DBStore:'
 
   GET_TOKEN_FILE_ERROR = 'Exception in get_token - FileStore:'
+
+  LOGGER_INITIALIZATION_ERROR = "Exception in Logger Initialization : "
 
   REFRESH_SINGLE_MODULE_FIELDS_ERROR = 'Exception in refreshing fields of module : '
 
@@ -216,8 +288,6 @@ class Constants
 
   DELETE_TOKENS_FILE_ERROR = 'Exception in delete_tokens - FileStore:'
 
-  SDK_LOGGER_INITIALIZE = 'Exception in Logger Initialization'
-
   DELETE_MODULE_FROM_FIELDFILE_ERROR = 'Exception in deleting module from Fields file'
 
   DELETE_FIELD_FILE_ERROR = 'Exception in deleting Current User Fields file'
@@ -232,7 +302,19 @@ class Constants
 
   GIVEN_VALUE = "given-value"
 
-  PHOTO_UPLOAD_ERROR_MESSAGE  = "The given module is not supported in API.";
+  GENERATED_TYPE = "generated_type"
+
+  GENERATED_TYPE_CUSTOM = "custom"
+
+  UPLOAD_PHOTO_UNSUPPORTED_MESSAGE = "Photo Upload Operation is not supported by the module: "
+
+  SDK_MODULE_METADATA = "SDK-MODULE-METADATA"
+
+  INVALID_MODULE_API_NAME_ERROR = "INVALID MODULE API NAME ERROR"
+
+  PROVIDE_VALID_MODULE_API_NAME = "PROVIDE VALID MODULE API NAME: "
+
+  UPLOAD_PHOTO_UNSUPPORTED_ERROR = "UPLOAD PHOTO UNSUPPORTED MODULE"
     
   INVALID_MODULE  = "INVALID_MODULE"
 
@@ -263,6 +345,8 @@ class Constants
   REQUEST_CATEGORY_UPDATE = 'UPDATE'
 
   MODULEPACKAGENAME = 'modulePackageName'
+  
+  MYSQL_TABLE_NAME = "oauthtoken"
 
   INITIALIZATION_SUCCESSFUL = 'Initialization successful'
 
@@ -495,19 +579,23 @@ class Constants
   HOST_ERROR_MESSAGE = 'Host MUST NOT be null.'
 
   PORT_ERROR_MESSAGE = 'Port MUST NOT be null.'
-	
-	USERSIGNATURE_ERROR_MESSAGE = "UserSignature MUST NOT be null."
-	
-	ENVIRONMENT_ERROR_MESSAGE = "Environment MUST NOT be null."
-	
-	SDK_CONFIG_ERROR_MESSAGE = "sdkConfig MUST NOT be null."
 
-  TOKEN_ERROR_MESSAGE = "Token MUST NOT be null."
+  REQUEST_PROXY_ERROR_MESSAGE = "request_proxy must be instance of Request Proxy"
+  
+  USER_SIGNATURE_ERROR_MESSAGE = "user must be instance of UserSignature."
 	
-	STORE_ERROR_MESSAGE = "Store MUST NOT be null."
+  ENVIRONMENT_ERROR_MESSAGE = "environment must be instance of Environment."
+	
+  SDK_CONFIG_ERROR_MESSAGE = "sdk_config must be instance of sdkConfig."
+
+  TOKEN_ERROR_MESSAGE = "token must be instance of Token."
+	
+  STORE_ERROR_MESSAGE = "store must be instance of Store."
 
   INITIALIZATION_EXCEPTION = 'Exception in initialization'
 
+  SWITCH_USER_EXCEPTION = 'Exception in Switch user'
+  
   SWITCH_USER_ERROR = "SWITCH USER ERROR"
 
   EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
@@ -535,4 +623,13 @@ class Constants
   PICKLIST = 'picklist'
 
   CONSENT_NAMESPACE = 'com.zoho.crm.api.record.Consent'
+
+  INVALID_TOKEN_ERROR = "INVALID TOKEN ERROR"
+
+  NO_ACCESS_TOKEN_ERROR = "ACCESS TOKEN IS NOT PRESENT IN RESPONSE"
+
+  CLIENT_ID_NULL_ERROR_MESSAGE = "ClientID MUST NOT be null"
+
+  CLIENT_SECRET_NULL_ERROR_MESSAGE = "ClientSecret MUST NOT be null"
+
 end

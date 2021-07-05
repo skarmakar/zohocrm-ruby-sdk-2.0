@@ -1,4 +1,4 @@
-# Ruby SDK
+# Ruby SDK API version 2.0
 
 ## Overview
 
@@ -25,7 +25,6 @@ Since Zoho CRM APIs are authenticated with OAuth2 standards, you should register
 ## Environmental Setup
 
 RUBY SDK requires Ruby (version 2.6 and above) to be set up in your development environment.
-
 
 ## Including the SDK in your project
 
@@ -78,6 +77,8 @@ In case the user prefers to use the default DataBase persistence, **MySQL** can 
 
   - client_id varchar(255)
 
+  - client_secret varchar(255)
+
   - refresh_token varchar(255)
 
   - access_token varchar(255)
@@ -86,10 +87,23 @@ In case the user prefers to use the default DataBase persistence, **MySQL** can 
 
   - expiry_time varchar(20)
 
+  - redirect_url varchar(255)
+
 #### MySQL Query
 
 ```sql
-create table oauthtoken(id int(11) not null auto_increment, user_mail varchar(255) not null, client_id varchar(255), refresh_token varchar(255), access_token varchar(255), grant_token varchar(255), expiry_time varchar(20), primary key (id))
+CREATE TABLE  oauthtoken (
+  id varchar(255) NOT NULL,
+  user_mail varchar(255) NOT NULL,
+  client_id varchar(255),
+  client_secret varchar(255),
+  refresh_token varchar(255),
+  access_token varchar(255),
+  grant_token varchar(255),
+  expiry_time varchar(20),
+  redirect_url varchar(255),
+  primary key (id)
+) 
 
 alter table oauthtoken auto_increment = 1
 ```
@@ -105,7 +119,7 @@ alter table oauthtoken auto_increment = 1
 # 5 -> DataBase port number. Default value "3306"
 
 tokenstore = Store::DBStore.new() 
-tokenstore = Store::DBStore.new("hostName", "dataBaseName", "userName", "password", "portNumber")
+tokenstore = Store::DBStore.new(host: "host_name", database_name: "database_name" ,table_name: "table_name",user_name: "user_name",password: "password",port_number:"port_number")
 ```
 
 ### File Persistence
@@ -114,9 +128,13 @@ In case of default File Persistence, the user can persist tokens in the local dr
 
 - The File contains.
 
+  - id 
+
   - user_mail
 
   - client_id
+
+  - client_secret
 
   - refresh_token
 
@@ -125,6 +143,8 @@ In case of default File Persistence, the user can persist tokens in the local dr
   - grant_token
 
   - expiry_time
+
+  - redirect_url
 
 #### Create FileStore object
 
@@ -163,6 +183,12 @@ require 'ZOHOCRMSDK2_0'
     def delete_token(token); end
 
     def delete_tokens; end
+    # This method is used to get the user token details.
+    # @param user A UserSignature class instance.
+    # @param id A String containing id
+    # @return A Token class instance representing the user token details.
+    # @raise SDKException
+    def get_token_by_id(id, token); end
   end
 
 
@@ -180,7 +206,7 @@ Before you get started with creating your Ruby application, you need to register
         # 1 -> Level of the log messages to be logged. Can be configured by typing Levels "::" and choose any level from the list displayed.
         # 2 -> Absolute file path, where messages need to be logged.
     #
-    log = SDKLog::Log.initialize(Levels::INFO,"/Users/user_name/Documents/rubysdk_log.log")
+    log = SDKLog::Log.initialize(level: Levels::INFO,path:"/Users/user_name/Documents/rubysdk_log.log")
     ```
 
 - Create an instance of **[UserSignature](resources/UserSignature.md#usersignature)** that identifies the current user.
@@ -209,12 +235,13 @@ Before you get started with creating your Ruby application, you need to register
     #Create a Token instance
     #1 -> OAuth client id.
     #2 -> OAuth client secret.
-    #3 -> REFRESH/GRANT token.
-    #4 -> Token type(REFRESH/GRANT).
-    #5 -> OAuth redirect URL.(optional)
+    #3 -> grant token
+    #4 -> refresh token
+    #5 -> OAuth redirect URL.
+    #6 -> id 
     
 
-    token = Authenticator::OAuthToken.new("clientId", "clientSecret", "REFRESH/GRANT token", TokenType::REFRESH/GRANT, "redirectURL")
+    token = Authenticator::OAuthToken.new(client_id: "clientId", client_secret:"clientSecret", grant_token:"grant_token", refresh_token:"refresh_token", redirect_url:"redirectURL","id")
     ```
 
 - Create an instance of [TokenStore](src/com/zoho/api/authenticator/store/token_store.rb) to persist tokens that are  used for authenticating all the requests.
@@ -228,7 +255,7 @@ Before you get started with creating your Ruby application, you need to register
     #4 -> DataBase password. Default ""
     #5 -> DataBase port number. Default "3306"
     
-    tokenstore = Store::DBStore.new("hostName", "dataBaseName", "userName", "password", "portNumber")
+    tokenstore = Store::DBStore.new(host: "host_name", database_name: "database_name" ,table_name: "table_name",user_name: "user_name",password: "password",port_number:"port_number")
 
     tokenstore = Store::FileStore.new("/Users/user_name/Documents/ruby_sdk_token.txt")
 
@@ -260,8 +287,8 @@ Before you get started with creating your Ruby application, you need to register
      # Seconds to reuse the connection of the previous request(default 2 seconds)
      # 
 
-    sdk_config = SDKConfig::Builder.new.auto_refresh_fields(false).pick_list_validation(true).open_timeout(60).read_timeout(60).write_timeout(60).keep_alive_timeout(2).build
-
+    sdk_config = SDKConfig.new(auto_refresh_fields: false,pick_list_validation: true,open_timeout: 60,read_timeout: 60,write_timeout: 60,keep_alive_timeout: 2)
+    ```
 
 - The path containing the absolute directory path to store user-specific files containing module fields information.
 
@@ -272,7 +299,7 @@ Before you get started with creating your Ruby application, you need to register
 - Create an instance of [RequestProxy](resources/RequestProxy.md) containing the proxy properties of the user.
 
     ```ruby
-    request_proxy = RequestProxy.new("proxyHost", "proxyPort", "proxyUser", "password")
+    request_proxy = RequestProxy.new(host:"proxyHost", post:"proxyPort", user_name:"proxyUser", password:"password")
     ```
 
 ## Initializing the Application
@@ -288,7 +315,7 @@ class Initialize
         #1 -> Level of the log messages to be logged. Can be configured by typing Levels "::" and choose any level from the list displayed.
         # 2 -> Absolute file path, where messages need to be logged.
         
-        log = SDKLog::Log.initialize(Levels::INFO,"/Users/user_name/Documents/rubysdk_log.log")
+        log = SDKLog::Log.initialize(level:Levels::INFO,path:"/Users/user_name/Documents/rubysdk_log.log")
 
         #Create an UserSignature instance that takes user Email as parameter
         user_signature = UserSignature.new('abc@zohocorp.com')
@@ -302,14 +329,15 @@ class Initialize
         environment = DC::USDataCenter.PRODUCTION
 
          #Create a Token instance
-        #1 -> OAuth client id.
-        #2 -> OAuth client secret.
-        #3 -> REFRESH/GRANT token.
-        #4 -> Token type(REFRESH/GRANT).
-        #5 -> OAuth redirect URL.(optional)
+         #1 -> OAuth client id.
+         #2 -> OAuth client secret.
+         #3 -> grant token
+         #4 -> refresh token
+         #5 -> OAuth redirect URL.
+         #6 -> id 
     
     
-        token = Authenticator::OAuthToken.new("clientId", "clientSecret", "REFRESH/GRANT token", TokenType::REFRESH/GRANT, "redirectURL")
+        token = Authenticator::OAuthToken.new(client_id: "clientId", client_secret:"clientSecret", grant_token:"grant_token", refresh_token:"refresh_token", redirect_url:"redirectURL","id")
 
         #Create an instance of TokenStore.
         #1 -> DataBase host name. Default "localhost"
@@ -318,7 +346,7 @@ class Initialize
         #4 -> DataBase password. Default ""
         #5 -> DataBase port number. Default "3306"
 
-        tokenstore = Store::DBStore.new("hostName", "dataBaseName", "userName", "password", "portNumber")
+        tokenstore = Store::DBStore.new(host: "host_name", database_name: "database_name" ,table_name: "table_name",user_name: "user_name",password: "password",port_number:"port_number")
 
         #tokenstore = Store::FileStore.new("/Users/user_name/Documents/ruby_sdk_token.txt"
 
@@ -344,7 +372,7 @@ class Initialize
         # Seconds to reuse the connection of the previous request(default 2 seconds)
         # 
         
-        sdk_config = SDKConfig::Builder.new.auto_refresh_fields(false).pick_list_validation(true).open_timeout(60).read_timeout(60).write_timeout(60).keep_alive_timeout(2).build
+        sdk_config = SDKConfig.new(auto_refresh_fields: false,pick_list_validation: true,open_timeout: 60,read_timeout: 60,write_timeout: 60,keep_alive_timeout: 2)
 
         resource_path = "/Users/user_name/Documents/rubysdk-application"
         
@@ -354,7 +382,7 @@ class Initialize
         # 3 -> User Name
         # 4 -> Password
         
-        request_proxy = RequestProxy.new("proxyHost", "proxyPort", "proxyUser", "password")
+        request_proxy = RequestProxy.new(host:"proxyHost", post:"proxyPort", user_name:"proxyUser", password:"password")
 
         
         # The initialize method of Initializer class that takes the following arguments
@@ -369,7 +397,7 @@ class Initialize
 
         #The following is the initialize method
 
-        Initializer.initialize(user, environment, token, store, sdk_config, resources_path, log, request_proxy)
+        Initializer.initialize(user: user_signature, environment: environment, token: token, store: tokenstore, sdk_config: sdk_config, resources_path: resource_path,log:log,request_proxy: request_proxy)
     end
 end
 
@@ -485,58 +513,57 @@ All other exceptions such as SDK anomalies and other unexpected behaviours are t
 
 Threads in a Ruby program help you achieve parallelism. By using multiple threads, you can make a Ruby program run faster and do multiple things simultaneously.
 
-The **Ruby SDK** (from version 0.0.x) supports both single-threading and multi-threading irrespective of a single-user or a multi-user app.
+The **Ruby SDK** (from version 2.0.x) supports both single-threading and multi-threading irrespective of a single-user or a multi-user app.
 
 ### Multithreading in a Multi-user App
 
 Multi-threading for multi-users is achieved using Initializer's static **switch_user()**.
-
+switch_user() takes the value initialized previously for user, enviroment, token and sdk_config incase None is passed (or default value is passed). In case of request_proxy, if intended, the value has to be passed again else None(default value) will be taken.
 ```ruby
-Initializer.switch_user(user, environment, token, sdk_config)
+Initializer.switch_user(user: user, environment:environment, token:token, sdk_config:sdk_config)
 
-Initializer.switch_user(user, environment, token, sdk_config, proxy)
+Initializer.switch_user(user: user, environment:environment, token:token, sdk_config:sdk_config,request_proxy:proxy)
 ```
 
 Here is a sample code to depict multi-threading for a multi-user app.
 
 ```ruby
 require 'ZOHOCRMSDK2_0'
-
 module MultiUser
     class MultiThreading
         def initialize(module_api_name)
             @module_api_name = module_api_name
         end
         def execute(user_signature, environment, token,tokenstore, sdk_config,resources_path, log, proxy)
-            Initializer.initialize(user_signature, environment, token, tokenstore, sdk_config, resources_path, log)
-            token1 =Authenticator::OAuthToken.new("clientId", "clientSecret", "REFRESH/GRANT token", TokenType::REFRESH/GRANT, "redirectURL")
+            Initializer.initialize(user: user_signature, environment: environment, token: token, store: tokenstore, sdk_config: sdk_config, resources_path: resource_path,log:log,request_proxy: proxy)
+            token1 =Authenticator::OAuthToken.new(client_id: "clientId", client_secret:"clientSecret", grant_token:"grant_token", refresh_token:"refresh_token", redirect_url:"redirectURL","id")
             user1 = UserSignature.new('abc@zohocorp.com')
             environment1 = DC::USDataCenter::PRODUCTION
-            sdk_config1 = SDKConfig::Builder.new.auto_refresh_fields(false).pick_list_validation(true).build
+            sdk_config1 = SDKConfig.new(auto_refresh_fields: false,pick_list_validation: true,open_timeout: 60,read_timeout: 60,write_timeout: 60,keep_alive_timeout: 2)
             t1 = Thread.new{func1(user1,environment1,token1,sdk_config1)}
-            token2 = Authenticator::OAuthToken.new("clientId", "clientSecret", "REFRESH/GRANT token", TokenType::REFRESH/GRANT, "redirectURL")
+            token2 = Authenticator::OAuthToken.new(client_id: "clientId", client_secret:"clientSecret", grant_token:"grant_token", refresh_token:"refresh_token", redirect_url:"redirectURL","id")
             user2 = UserSignature.new('dfg@zohocorp.com')
             environment2 = DC::USDataCenter::PRODUCTION
-            sdk_config2 = SDKConfig::Builder.new.auto_refresh_fields(false).pick_list_validation(true).build
+            sdk_config2 = SDKConfig.new(auto_refresh_fields: false,pick_list_validation: true,open_timeout: 60,read_timeout: 60,write_timeout: 60,keep_alive_timeout: 2)
             t2 = Thread.new{func1(user2,environment2,token2,sdk_config2)}
             t1.join
             t2.join
         end
         def func1(user,environment,token,sdk_config)
-            Initializer.switch_user(user,environment,token,sdk_config)
+            Initializer.switch_user(user: user, environment:environment, token:token, sdk_config:sdk_config)
             print Initializer.get_initializer.user.email
             ro = Record::RecordOperations.new
             ro.get_records(@module_api_name,nil,nil)
         end
     end
 end
-log = SDKLog::Log.initialize(Levels::INFO,"/Users/user_name/Documents/rubysdk_log.log")
+log = SDKLog::Log.initialize(level:Levels::INFO,path:"/Users/user_name/Documents/rubysdk_log.log")
 user_signature = UserSignature.new('abc@zohocorp.com')
 environment = DC::USDataCenter::PRODUCTION
-token = Authenticator::OAuthToken.new("clientId", "clientSecret", "REFRESH/GRANT token", TokenType::REFRESH/GRANT, "redirectURL")
+token = Authenticator::OAuthToken.new(client_id: "clientId", client_secret:"clientSecret", grant_token:"grant_token", refresh_token:"refresh_token", redirect_url:"redirectURL","id")
 tokenstore = Store::FileStore.new("/Users/user_name/Documents/ruby_sdk_token.txt")
-sdk_config = SDKConfig::Builder.new.auto_refresh_fields(false).pick_list_validation(true).build
-proxy = RequestProxy.new("proxyHost", "proxyPort", "proxyUser", "password")
+sdk_config = SDKConfig.new(auto_refresh_fields: false,pick_list_validation: true,open_timeout: 60,read_timeout: 60,write_timeout: 60,keep_alive_timeout: 2)
+proxy = RequestProxy.new(host:"proxyHost", post:"proxyPort", user_name:"proxyUser", password:"password")
 module_api_name = "Leads"
 resource_path = "/Users/user_name/Documents"
 MultiUser::MultiThreading.new(module_api_name).execute(user_signature, environment, token,tokenstore, sdk_config,resource_path, log,proxy)
@@ -557,12 +584,11 @@ MultiUser::MultiThreading.new(module_api_name).execute(user_signature, environme
 
 ```ruby
 require 'ZOHOCRMSDK2_0'
-
 module SingleUser
     class MultiThreading
 
         def execute(user_signature, environment, token,tokenstore, sdk_config,resources_path, log,proxy)
-            Initializer.initialize(user_signature, environment, token, tokenstore, sdk_config, resources_path, log)
+            Initializer.initialize(user: user_signature, environment: environment, token: token, store: tokenstore, sdk_config: sdk_config, resources_path: resource_path,log:log,request_proxy: proxy)
             t1 = Thread.new{func1("Leads")}
             t2 = Thread.new{func1("Deals")}
             t1.join
@@ -576,13 +602,13 @@ module SingleUser
     end
 end
 
-log = SDKLog::Log.initialize(Levels::INFO,"/Users/user_name/Documents/rubysdk_log.log")
+log = SDKLog::Log.initialize(level:Levels::INFO,path:"/Users/user_name/Documents/rubysdk_log.log")
 user_signature = UserSignature.new('abc@zohocorp.com')
 environment = DC::USDataCenter::PRODUCTION
-token = Authenticator::OAuthToken.new("clientId", "clientSecret", "REFRESH/GRANT token", TokenType::REFRESH/GRANT, "redirectURL")
+token = Authenticator::OAuthToken.new(client_id: "clientId", client_secret:"clientSecret", grant_token:"grant_token", refresh_token:"refresh_token", redirect_url:"redirectURL","id")
 tokenstore = Store::FileStore.new("/Users/user_name/Documents/ruby_sdk_token.txt")
-sdk_config = SDKConfig::Builder.new.auto_refresh_fields(false).pick_list_validation(true).build
-proxy = RequestProxy.new("proxyHost", "proxyPort", "proxyUser", "password")
+sdk_config = SDKConfig.new(auto_refresh_fields: false,pick_list_validation: true,open_timeout: 60,read_timeout: 60,write_timeout: 60,keep_alive_timeout: 2)
+proxy = RequestProxy.new(host:"proxyHost", post:"proxyPort", user_name:"proxyUser", password:"password")
 resource_path = "/Users/user_name/Documents/rubysdk-application"
 SingleUser::MultiThreading.new.execute(user_signature, environment, token,tokenstore, sdk_config,resource_path, log,proxy)
 ```
@@ -597,7 +623,6 @@ SingleUser::MultiThreading.new.execute(user_signature, environment, token,tokens
 
 ```ruby
 require 'ZOHOCRMSDK2_0'
-
 require 'date'
 class Records
   def get_records
@@ -605,7 +630,7 @@ class Records
     #1 -> Level of the log messages to be logged. Can be configured by typing Levels "::" and choose any level from the list displayed.
     # 2 -> Absolute file path, where messages need to be logged.
 
-    log = SDKLog::Log.initialize(Levels::INFO,"/Users/user_name/Documents/rubysdk_log.log")
+    log = SDKLog::Log.initialize(level:Levels::INFO,path:"/Users/user_name/Documents/rubysdk_log.log")
 
     #Create an UserSignature instance that takes user Email as parameter
     user_signature = UserSignature.new('abc@zohocorp.com')
@@ -620,11 +645,12 @@ class Records
     #Create a Token instance
     #1 -> OAuth client id.
     #2 -> OAuth client secret.
-    #3 -> REFRESH/GRANT token.
-    #4 -> Token type(REFRESH/GRANT).
-    #5 -> OAuth redirect URL.(optional)
+    #3 -> grant token
+    #4 -> refresh token
+    #5 -> OAuth redirect URL.
+    #6 -> id 
 
-    token = Authenticator::OAuthToken.new("clientId", "clientSecret", "REFRESH/GRANT token", TokenType::REFRESH/GRANT, "redirectURL")
+    token = Authenticator::OAuthToken.new(client_id: "clientId", client_secret:"clientSecret", grant_token:"grant_token", refresh_token:"refresh_token", redirect_url:"redirectURL","id")
 
     #Create an instance of TokenStore.
     #1 -> DataBase host name. Default "localhost"
@@ -633,7 +659,7 @@ class Records
     #4 -> DataBase password. Default ""
     #5 -> DataBase port number. Default "3306"
 
-    store = Store::DBStore.new("hostName", "dataBaseName", "userName", "password", "portNumber")
+    store = Store::DBStore.new(host: "host_name", database_name: "database_name" ,table_name: "table_name",user_name: "user_name",password: "password",port_number:"port_number")
 
     #store = Store::FileStore.new("/Users/user_name/Documents/ruby_sdk_token.txt"
 
@@ -658,8 +684,7 @@ class Records
     # Seconds to reuse the connection of the previous request(default 2 seconds)
     # 
 
-     sdk_config = SDKConfig::Builder.new.auto_refresh_fields(false).pick_list_validation(true).open_timeout(60).read_timeout(60).write_timeout(60).keep_alive_timeout(2).build
-
+     sdk_config =  SDKConfig.new(auto_refresh_fields: false,pick_list_validation: true,open_timeout: 60,read_timeout: 60,write_timeout: 60,keep_alive_timeout: 2)
 
     resource_path = "/Users/user_name/Documents/rubysdk-application"
     # Create an instance of RequestProxy class that takes the following parameters
@@ -668,7 +693,7 @@ class Records
     # 3 -> User Name
     # 4 -> Password
 
-    request_proxy = RequestProxy.new('proxyHost', 'proxyPort', 'proxyUser', 'password')
+    request_proxy = RequestProxy.new(host:"proxyHost", post:"proxyPort", user_name:"proxyUser", password:"password")
 
     # The initialize method of Initializer class that takes the following arguments
     # 1 -> UserSignature instance
@@ -682,7 +707,7 @@ class Records
 
     #The following is the initialize method
 
-    Initializer.initialize(user_signature, environment, token, store, sdk_config, resources_path, log, request_proxy)
+    Initializer.initialize(user: user_signature, environment: environment, token: token, store: store, sdk_config: sdk_config, resources_path: resource_path,log:log,request_proxy: request_proxy)
     # Get instance of RecordOperations Class
     ro = Record::RecordOperations.new
     # Get instance of ParameterMap Class

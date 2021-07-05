@@ -24,7 +24,7 @@ module Util
     end
 
     def set_content_type_header
-      Constants::SET_TO_CONTENT_TYPE.each do |content_type|
+      Constants::SET_CONTENT_TYPE_HEADER.each do |content_type|
         if @url.include? content_type
           @headers[Constants::CONTENT_TYPE] = @content_type
           break
@@ -49,7 +49,6 @@ module Util
       http = nil
       initializer = Initializer.get_initializer
       request_proxy = initializer.request_proxy
-
       if request_proxy.nil?
         http = Net::HTTP.new(url.host, url.port)
       else
@@ -97,16 +96,17 @@ module Util
 
     def to_s
       req_headers = @headers.clone
-      req_headers [Constants::AUTHORIZATION] = Constants::CANT_DISCLOSE
+      req_headers[Constants::AUTHORIZATION] = Constants::CANT_DISCLOSE
       @request_method + ' - ' + Constants::URL + ' = ' + @url + ', ' + Constants::HEADERS + ' = ' + req_headers.to_s + ', ' + Constants::PARAMS + ' = ' + @parameters.to_s
     end
 
     def proxy_log(request_proxy)
+      proxy_log = Constants::PROXY_SETTINGS + Constants::PROXY_HOST + request_proxy.host + " , "
+      proxy_log += Constants::PROXY_PORT + request_proxy.port.to_s
       if request_proxy.user_name.nil?
-        'Proxy settings - Host : ' + request_proxy.host + ' , Port : ' + request_proxy.port.to_s
-      else
-        'Proxy settings - Host : ' + request_proxy.host + ' , Port : ' + request_proxy.port.to_s + ' , Proxy User : ' + request_proxy.user_name
+        proxy_log +=  " , " + Constants::PROXY_USER + request_proxy.user_name
       end
+      proxy_log
     end
   end
 end

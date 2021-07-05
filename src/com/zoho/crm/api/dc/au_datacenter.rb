@@ -11,8 +11,8 @@ module DC
       'https://content.zohoapis.com.au'
     end
 
-    PRODUCTION = Environment.new('https://www.zohoapis.com.au', AUDataCenter.new.get_iam_url, AUDataCenter.new.get_file_upload_url)
-    SANDBOX = Environment.new('https://sandbox.zohoapis.com.au', AUDataCenter.new.get_iam_url, AUDataCenter.new.get_file_upload_url)
-    DEVELOPER = Environment.new('https://developer.zohoapis.com.au', AUDataCenter.new.get_iam_url, AUDataCenter.new.get_file_upload_url)
+    PRODUCTION = Environment.new('https://www.zohoapis.com.au', AUDataCenter.new.get_iam_url, AUDataCenter.new.get_file_upload_url,"au_prd")
+    SANDBOX = Environment.new('https://sandbox.zohoapis.com.au', AUDataCenter.new.get_iam_url, AUDataCenter.new.get_file_upload_url,"au_sdb")
+    DEVELOPER = Environment.new('https://developer.zohoapis.com.au', AUDataCenter.new.get_iam_url, AUDataCenter.new.get_file_upload_url,"au_dev")
   end
 end

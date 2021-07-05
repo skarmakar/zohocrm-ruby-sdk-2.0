@@ -16,7 +16,7 @@ module Store
 
       unless File.exist? @file_path
         File.new(@file_path, 'w')
-        @csv_file = CSV.open(@file_path, 'a', write_headers: true, headers: [Constants::USER_MAIL, Constants::CLIENT_ID, Constants::REFRESH_TOKEN, Constants::ACCESS_TOKEN, Constants::GRANT_TOKEN, Constants::EXPIRY_TIME])
+        @csv_file = CSV.open(@file_path, 'a', write_headers: true, headers: [Constants::ID,Constants::USER_MAIL, Constants::CLIENT_ID,Constants::CLIENT_SECRET, Constants::REFRESH_TOKEN, Constants::ACCESS_TOKEN, Constants::GRANT_TOKEN, Constants::EXPIRY_TIME,Constants::REDIRECT_URL])
       end
       @csv_file = CSV.open(@file_path, 'a')
     end
@@ -38,15 +38,33 @@ module Store
         end
 
         file_contents.each do |row|
-          token_check = grant_token.nil? ? refresh_token == row[2] : grant_token == row[4]
+          token_check = grant_token.nil? ? refresh_token == row[4] : grant_token == row[6]
+          if (row[1] == user_email) && (row[2] == client_id) && token_check
 
-          if (row[0] == user_email) && (row[1] == client_id) && token_check
-            token.refresh_token = row[2]
+            grant_token = (!row[6].nil? &&  !row[6].empty?) ? row[6] : nil
 
-            token.access_token = row[3]
+            redirect_url = (!row[8].nil? &&  !row[8].empty?) ? row[8] : nil
+            
+            oauthtoken = token
 
-            token.expires_in = row[5]
-            return token
+            oauthtoken.id = row[0]
+
+            oauthtoken.user_mail = row[1]
+
+            oauthtoken.client_id = row[2]
+
+            oauthtoken.client_secret = row[3]
+
+            oauthtoken.refresh_token = row[4]
+
+            oauthtoken.access_token = row[5]
+    
+            oauthtoken.grant_token = grant_token
+
+            oauthtoken.expires_in = row[7]
+    
+            oauthtoken.redirect_url = redirect_url
+            return oauthtoken
           end
         end
       end
@@ -60,25 +78,21 @@ module Store
       file_contents = CSV.table(@file_path)
       file_contents.each do |row|
         unless row == @csv_file.header_row?
-          token_type = nil
-          token_value = nil
-          if !row[4].nil? && row[4].length.positive?
-            token_type = TokenType::GRANT
-            token_value = row[4]
-          else
-            token_type = TokenType::REFRESH
-            token_value = row[2]
-          end
+          grant_token = (!row[6].nil? &&  !row[6].empty?) ? row[6] : nil
 
-          token = Authenticator::OAuthToken.new(row[1], nil, token_value, token_type)
+          redirect_url = (!row[8].nil? &&  !row[8].empty?) ? row[8] : nil
 
-          token.user_mail = row[0]
+          token = Authenticator::OAuthToken.new(client_id: row[2],client_secret: row[3],grant_token: grant_token,refresh_token: row[4])
+            
+          token.id  = row[0]
 
-          token.refresh_token = row[2]
+          token.user_mail = row[1]
 
-          token.access_token = row[3]
+          token.access_token = row[5]
 
-          token.expires_in = row[5]
+          token.expires_in = row[7]
+
+          token.redirect_url = redirect_url
 
           tokens.push(token)
         end
@@ -96,9 +110,13 @@ module Store
         delete_token(token)
         values_list = []
 
+        values_list.push(token.id)
+
         values_list.push(user.email)
 
         values_list.push(token.client_id)
+
+        values_list.push(token.client_secret)
 
         values_list.push(token.refresh_token)
 
@@ -107,6 +125,8 @@ module Store
         values_list.push(token.grant_token)
 
         values_list.push(token.expires_in)
+
+        values_list.push(token.redirect_url)
       end
       @csv_file = CSV.open(@file_path, 'a') if @csv_file.closed?
       @csv_file << values_list
@@ -118,6 +138,7 @@ module Store
 
     def delete_token(token)
       if token.is_a? Authenticator::OAuthToken
+      
         grant_token = token.grant_token
 
         refresh_token = token.refresh_token
@@ -134,9 +155,10 @@ module Store
 
         table.delete_if do |row|
           unless row == @csv_file.header_row?
-            token_check = grant_token.nil? ? refresh_token == row[:refresh_token] : grant_token == row[:grant_token]
-
-            row[:user_mail] == user_email and row[:client_id] == client_id and token_check
+       
+            token_check = grant_token.nil? ? refresh_token == row[4] : grant_token == row[6]
+           
+            row[1] == user_email and row[2] == client_id and token_check
           end
         end
 
@@ -160,6 +182,55 @@ module Store
       end
     rescue StandardError => e
       raise SDKException.new(Constants::TOKEN_STORE, Constants::DELETE_TOKENS_FILE_ERROR, nil, e)
+    end
+
+    def get_token_by_id(id, token)
+      if token.is_a? Authenticator::OAuthToken
+
+        is_row_present = false
+        
+        file_contents = CSV.read(@file_path)
+
+        file_contents.each do |row|
+
+          if row[0] == id 
+
+            is_row_present = true
+
+            grant_token = (!row[6].nil? &&  !row[6].empty?) ? row[6] : nil
+
+            redirect_url = (!row[8].nil? &&  !row[8].empty?) ? row[8] : nil
+
+            oauthtoken = token
+
+            oauthtoken.id = row[0]
+
+            oauthtoken.user_mail = row[1]
+
+            oauthtoken.client_id = row[2]
+
+            oauthtoken.client_secret = row[3]
+
+            oauthtoken.refresh_token = row[4]
+
+            oauthtoken.access_token = row[5]
+    
+            oauthtoken.grant_token = grant_token
+
+            oauthtoken.expires_in = row[7]
+    
+            oauthtoken.redirect_url = redirect_url
+    
+            return oauthtoken
+          end
+        end
+        if !is_row_present
+          raise SDKException.new(Constants::TOKEN_STORE, Constants::GET_TOKEN_BY_ID_FILE_ERROR, nil, nil)
+        end
+      end
+      nil
+    rescue StandardError => e
+      raise SDKException.new(Constants::TOKEN_STORE, Constants::GET_TOKEN_BY_ID_FILE_ERROR, nil, e)
     end
   end
 end

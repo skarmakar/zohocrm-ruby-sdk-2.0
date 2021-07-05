@@ -13,10 +13,10 @@ module Util
     end
 
     def append_to_request(request_base, request_object)
-      request_base.set_form(set_file_fody(request_object), Constants::MULTIPART_FORM_DATA) if request_object.is_a?(Hash)
+      request_base.set_form(set_file_body(request_object), Constants::MULTIPART_FORM_DATA) if request_object.is_a?(Hash)
     end
 
-    def set_file_fody(request_object)
+    def set_file_body(request_object)
       data = []
       request_object.each do |key, value|
         if value.is_a? Array
@@ -38,19 +38,7 @@ module Util
 
     def form_request(request_instance, class_path, instance_no, member_json_details = nil)
       require_relative '../initializer'
-      if  @common_api_handler.api_path.include? Constants::PHOTO
-        path = @common_api_handler.api_path.split("/")
-        if path.length == 6
-          module_api_name = path[3].downcase
-          if path[1].downcase == Constants::CRM && path[2].downcase == Constants::API_VERSION && path[5].downcase == Constants::PHOTO && !(Constants::PHOTO_SUPPORTED_MODULES.include? module_api_name) 
-            api_supported_module = Utility::api_supported_module
-            if api_supported_module.key?(module_api_name) && api_supported_module[module_api_name].downcase != "custom"
-              raise SDKException.new(Constants::INVALID_MODULE, Constants::PHOTO_UPLOAD_ERROR_MESSAGE)
-            end
-          end
-        end
-      end
-
+    
       package_name = Utility.path_to_package(class_path)
       class_details = Initializer.json_details[package_name]
       request_hash = {}
@@ -73,7 +61,7 @@ module Util
 
         member_data = request_instance.instance_variable_get(Constants::AT + member_name)
 
-        if !modified.nil? && (modified != 0) && value_checker(request_instance.class.name, member_name, member_details, member_data, @unique_hash, instance_no)
+        if !modified.nil? && (modified != 0) && !member_data.nil? && value_checker(request_instance.class.name, member_name, member_details, member_data, @unique_hash, instance_no)
           key_name = member_details[Constants::NAME]
           type = member_details[Constants::TYPE]
           if type.downcase == Constants::LIST_NAMESPACE.downcase

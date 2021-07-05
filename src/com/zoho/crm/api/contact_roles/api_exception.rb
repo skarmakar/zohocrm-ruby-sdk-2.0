@@ -5,11 +5,15 @@ module ContactRoles
   require_relative 'response_handler'
   require_relative 'action_response'
   require_relative 'action_handler'
+  require_relative 'record_response_handler'
+  require_relative 'record_action_handler'
   class APIException
     include Util::Model
     include ResponseHandler
     include ActionResponse
     include ActionHandler
+    include RecordResponseHandler
+    include RecordActionHandler
 
     # Creates an instance of APIException
     def initialize

@@ -22,5 +22,12 @@ module Store
     def delete_token(token); end
 
     def delete_tokens; end
+
+       # This method is used to get the user token details.
+    # @param user A UserSignature class instance.
+    # @param id A String containing id
+    # @return A Token class instance representing the user token details.
+    # @raise SDKException
+    def get_token_by_id(id, token); end
   end
 end

@@ -56,7 +56,23 @@ module Util
       check = true
 
       unless value.nil? 
-        var_type = value.class.name
+        if key_details.key? Constants::INTERFACE and key_details[Constants::INTERFACE] == true
+          json_details = Initializer.get_initializer.json_details
+          interface_details = json_details[key_details[Constants::STRUCTURE_NAME]]
+          classes = interface_details[Constants::CLASSES]
+          check = false
+          classes.each do |each_class_name|
+            class_name_lower = each_class_name.to_s.downcase
+            value_class_name = til::Utility.path_to_package(value.class.name).downcase
+  
+            if class_name_lower.downcase == value_class_name
+              check = true
+              break
+            end
+          end
+        else
+          var_type = value.class.name
+        end
       end
   
       if Constants::DATA_TYPE.key? type 
@@ -70,7 +86,6 @@ module Util
                 instance_number = index
                 type = Constants::LIST_NAMESPACE + '(' + structure_name + ')'
                 var_type = Constants::LIST_NAMESPACE + '(' + class_name + ')'
-                expected_list_type = false
                 check = false
                
                 break
@@ -108,7 +123,9 @@ module Util
 
       if key_details.key?(Constants::VALUES) && (!key_details.key?(Constants::PICKLIST) || (key_details[Constants::PICKLIST] && Initializer.get_initializer.sdk_config.pick_list_validation))
         value = value.value if value.is_a? Util::Choice
-        unless key_details[Constants::VALUES].include? value
+
+        values_ja = key_details[Constants::VALUES]
+        unless values_ja.include? value
 
           unless instance_number.nil?
             error[Constants::INDEX] = instance_number 
@@ -120,7 +137,7 @@ module Util
 
           error[Constants::ERROR_HASH_FIELD] = member_name
 
-          error[Constants::ACCEPTED_VALUES] = key_details[Constants::VALUES]
+          error[Constants::ACCEPTED_VALUES] = values_ja
 
           raise SDKException.new(Constants::UNACCEPTED_VALUES_ERROR, nil, error, nil)
         end

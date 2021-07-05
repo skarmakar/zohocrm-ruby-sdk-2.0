@@ -22,29 +22,89 @@ module Util
 
     @@apitype_vs_structurename = {}
 
-    @@api_supported_module ={}
-
     @@new_file = false
 
     @@get_modified_modules = false
 
-    @@force_refresh = false
+    @@api_supported_module = {}
 
     @@module_api_name = nil
-    def self.api_supported_module
-      @@api_supported_module
-    end
-    def self.verify_photo_support(module_api_name)
-    end
-    def self.get_fields(module_api_name)
-      @@sync_lock.synchronize do
-        begin
-          @@module_api_name = module_api_name
-          get_fields_info(@@module_api_name)
+
+    @@force_refresh = false
+    def self.set_handler_api_path(module_api_name, handler_instance)
+      if handler_instance.nil?
+        return 
+      end
+      api_path = handler_instance.api_path
+      if module_api_name.downcase == api_path.downcase
+        api_path_split = api_path.split('/')
+        api_path_split.each do |api_path_split|
+          split_lower = api_path_split[i].downcase
+          if split_lower == module_api_name.downcase
+            api_path_splits[i] = module_api_name
+          elsif Constants::DEFAULT_MODULENAME_VS_APINAME.key? split_lower && !Constants::DEFAULT_MODULENAME_VS_APINAME[split_lower].nil?
+            api_path_splits[i] = Constants::DEFAULT_MODULENAME_VS_APINAME[split_lower]
+          end
+          api_path = api_path_splits.join("/")
+          handler_instance.api_path = api_path
         end
       end
     end
-    def self.get_fields_info(module_api_name)
+
+    def self.file_exists_flow(module_api_name,record_field_details_path,last_modified_time)
+      @@sync_lock.synchronize do
+        initializer = Initializer.get_initializer
+        record_field_details_json = JSON.parse(File.read(record_field_details_path))
+        last_modified_time_exists = false
+        if record_field_details_json.key?(Constants::FIELDS_LAST_MODIFIED_TIME) && !record_field_details_json[Constants::FIELDS_LAST_MODIFIED_TIME].nil?
+          if get_current_time_in_millis - record_field_details_json[Constants::FIELDS_LAST_MODIFIED_TIME] > 3_600_000
+            last_modified_time_exists = true
+          end
+        end
+        if !record_field_details_json.key?(Constants::FIELDS_LAST_MODIFIED_TIME) || @@force_refresh
+          last_modified_time_exists = true
+        end
+        
+        if initializer.sdk_config.auto_refresh_fields && !@@new_file && !@@get_modified_modules && last_modified_time_exists
+          @@get_modified_modules = true
+          last_modified_time = (record_field_details_json.key? Constants::FIELDS_LAST_MODIFIED_TIME) ? record_field_details_json[Constants::FIELDS_LAST_MODIFIED_TIME] : nil
+          modify_fields(record_field_details_path, last_modified_time)
+          @@get_modified_modules = false
+        elsif !initializer.sdk_config.auto_refresh_fields && @@force_refresh && !@@get_modified_modules
+          @@get_modified_modules = true
+          modify_fields(record_field_details_path, last_modified_time)
+          @@get_modified_modules = false
+        end
+
+        record_field_details_json = JSON.parse(File.read(record_field_details_path))
+        return if module_api_name.nil? || record_field_details_json.key?(module_api_name.downcase)
+
+        fill_data_type()
+
+        record_field_details_json[module_api_name.downcase] = {}
+
+        File.open(record_field_details_path, 'w') do |f|
+          f.write(record_field_details_json.to_json)
+        end
+        field_details = get_fields_details(module_api_name)
+        record_field_details_json = JSON.parse(File.read(record_field_details_path))
+
+        record_field_details_json[module_api_name.downcase] = field_details
+
+        File.open(record_field_details_path, 'w') do |f|
+          f.write(record_field_details_json.to_json)
+        end
+      end
+    end
+
+    def self.get_fields(module_api_name, handler_instance=nil)
+      @@sync_lock.synchronize do
+        @@module_api_name = module_api_name
+        get_fields_info(module_api_name,handler_instance)
+      end
+    end
+
+    def self.get_fields_info(module_api_name, handler_instance=nil)
       require_relative '../initializer'
       initializer = Initializer.get_initializer
       record_field_details_path = nil
@@ -57,54 +117,18 @@ module Util
           resoures_folder_path = initializer.resources_path + '/' + Constants::RESOURCES
 
           Dir.mkdir resoures_folder_path unless File.exist? resoures_folder_path
-          record_field_details_path = get_record_json_file_path
-
+          record_field_details_path = get_record_json_file_path()
+          module_api_name = verify_module_api_name(module_api_name)
+          set_handler_api_path(module_api_name,handler_instance)
+          
           if File.exist? record_field_details_path
-            record_field_details_json = JSON.parse(File.read(record_field_details_path))
-            last_modified_time_exists = false
-            if @@force_refresh
-              if record_field_details_json.key?(Constants::FIELDS_LAST_MODIFIED_TIME) && !record_field_details_json[Constants::FIELDS_LAST_MODIFIED_TIME].nil?
-                if get_current_time_in_millis - record_field_details_json[Constants::FIELDS_LAST_MODIFIED_TIME] > 3_600_000
-                  last_modified_time_exists = true
-                end
-              end
-            end
-            if initializer.sdk_config.auto_refresh_fields && !@@new_file && !@@get_modified_modules && last_modified_time_exists
-              @@get_modified_modules = true
-              last_modified_time = (record_field_details_json.key? Constants::FIELDS_LAST_MODIFIED_TIME) ? record_field_details_json[Constants::FIELDS_LAST_MODIFIED_TIME] : nil
-              modify_fields(record_field_details_path, last_modified_time)
-              @@get_modified_modules = false
-            elsif !initializer.sdk_config.auto_refresh_fields && @@force_refresh && !@@get_modified_modules
-              @@get_modified_modules = true
-              modify_fields(record_field_details_path, last_modified_time)
-              @@get_modified_modules = false
-            end
-
-            record_field_details_json = JSON.parse(File.read(record_field_details_path))
-            return if module_api_name.nil? || record_field_details_json.key?(module_api_name.downcase)
-
-            fill_data_type
-
-            record_field_details_json[module_api_name.downcase] = {}
-
-            File.open(record_field_details_path, 'w') do |f|
-              f.write(record_field_details_json.to_json)
-            end
-            field_details = get_fields_details(module_api_name)
-            record_field_details_json = JSON.parse(File.read(record_field_details_path))
-
-            record_field_details_json[module_api_name.downcase] = field_details
-
-            File.open(record_field_details_path, 'w') do |f|
-              f.write(record_field_details_json.to_json)
-            end
-
+            file_exists_flow(module_api_name,record_field_details_path,last_modified_time)
           elsif initializer.sdk_config.auto_refresh_fields
             @@new_file = true
-            fill_data_type
-            if @@api_supported_module.length == 0
-              @@api_supported_module = get_modules_api_names(nil)
-            end
+            fill_data_type()
+            @@api_supported_module = @@api_supported_module.length == 0 ? get_modules(nil) : @@api_supported_module
+          
+            record_field_details_json  = File.exist? record_field_details_path ? JSON.parse(File.read(record_field_details_path)) : {}
            
             record_field_details_json = { Constants::FIELDS_LAST_MODIFIED_TIME => get_current_time_in_millis }
             @@api_supported_module.each_key do |module_name|
@@ -113,7 +137,7 @@ module Util
                 File.open(record_field_details_path, 'w') do |f|
                   f.write(record_field_details_json.to_json)
                 end
-                field_details = get_fields_details(module_name)
+                field_details = get_fields_details( @@api_supported_module[module_name][Constants::API_NAME])
                 record_field_details_json = JSON.parse(File.read(record_field_details_path))
                 record_field_details_json[module_name.downcase] = field_details
                 File.open(record_field_details_path, 'w') do |f|
@@ -131,7 +155,7 @@ module Util
             modify_fields(record_field_details_path, last_modified_time)
             @@get_modified_modules = false
           else
-            fill_data_type
+            fill_data_type()
 
             record_field_details_json = { module_api_name.downcase => {} }
 
@@ -183,9 +207,9 @@ module Util
     end
 
     def self.modify_fields(record_field_details_path, modified_time)
-      modified_modules = get_modules_api_names(modified_time)
+      modified_modules = get_modules(modified_time)
       record_field_details_json = JSON.parse(File.open(record_field_details_path).read)
-      record_field_details_json[Constants::FIELDS_LAST_MODIFIED_TIME] = get_current_time_in_millis
+      record_field_details_json[Constants::FIELDS_LAST_MODIFIED_TIME] = get_current_time_in_millis()
       File.open(record_field_details_path, 'w') do |f|
         f.write(record_field_details_json.to_json)
       end
@@ -201,8 +225,28 @@ module Util
         f.write(record_field_details_json.to_json)
       end
       modified_modules.each_key do |module_api_name|
-        get_fields_info(module_api_name)
+        module_data = modified_modules[module_api_name]
+        get_fields_info(module_data[Constants::API_NAME])
       end
+    end
+
+    def self.verify_module_api_name(module_api_name)
+
+      if !module_api_name.nil? 
+        if Constants::DEFAULT_MODULENAME_VS_APINAME.key? (module_api_name.downcase) && !Constants::DEFAULT_MODULENAME_VS_APINAME[module_api_name.downcase].nil?
+          return Constants::DEFAULT_MODULENAME_VS_APINAME[module_api_name.downcase]
+        end
+      end
+
+      record_field_details_path = get_record_json_file_path()
+
+      if File.exist? record_field_details_path
+        fields_json =  JSON.parse(File.open(record_field_details_path).read)
+        if fields_json.key? Constants::SDK_MODULE_METADATA and fields_json[Constants::SDK_MODULE_METADATA].key? module_api_name.downcase
+          return fields_json[Constants::SDK_MODULE_METADATA][module_api_name.downcase][Constants::API_NAME]
+        end
+      end
+      return module_api_name
     end
 
     def self.delete_fields(record_field_details_json, module_api_name)
@@ -224,8 +268,8 @@ module Util
       end
     end
 
-    def self.get_record_json_file_path
-      Converter.new(nil).get_record_json_file_path
+    def self.get_record_json_file_path()
+      Converter.new(nil).get_record_json_file_path()
     end
 
     def self.get_related_lists(related_module_name, module_api_name, common_api_handler)
@@ -241,13 +285,14 @@ module Util
           resoures_folder_path = initializer.resources_path + '/' + Constants::RESOURCES
           Dir.mkdir resoures_folder_path unless File.exist? resoures_folder_path
 
-          record_field_details_path = get_record_json_file_path
+          record_field_details_path = get_record_json_file_path()
           if !File.exist?(record_field_details_path) || (File.exist?(record_field_details_path) && !(JSON.parse(File.read(record_field_details_path)).key? key))
             is_new_data = true
             related_list_values = get_related_list_details(module_api_name)
-            record_field_details_json = {}
-            if File.exist? record_field_details_path
+            if  File.exist? (record_field_details_path)
               record_field_details_json = JSON.parse(File.read(record_field_details_path))
+            else
+              record_field_details_json = {}
             end
             record_field_details_json[key] = related_list_values
             File.open(record_field_details_path, 'w') do |f|
@@ -265,6 +310,7 @@ module Util
           end
         rescue SDKException => e
           SDKLog::SDKLogger.severe(Constants::EXCEPTION, e)
+          raise e
         rescue StandardError => e
           ex = SDKException.new(nil, Constants::EXCEPTION, nil, e)
           SDKLog::SDKLogger.severe(Constants::EXCEPTION, ex)
@@ -318,11 +364,7 @@ module Util
             error_response[Constants::STATUS] = data_object.status.value
             error_response[Constants::MESSAGE] = data_object.message.value
             error_response[Constants::DETAILS] = data_object.details
-            exception = SDKException.new(Constants::API_EXCEPTION, nil, error_response)
-            if @@module_api_name.downcase == module_api_name.downcase
-              raise exception
-            end
-            SDKLog::SDKLogger.severe(Constants::API_EXCEPTION,exception)
+            raise SDKException.new(Constants::API_EXCEPTION, nil, error_response)
           end
         else
           error_response = {}
@@ -514,7 +556,7 @@ module Util
         return
       elsif (key_name.downcase == Constants::COMMENTS.downcase) && ((module_api_name == Constants::SOLUTIONS.downcase) || (module_api_name == Constants::CASES.downcase))
         field_detail[Constants::NAME] = key_name
-        field_detail[Constants::TYPE] = Constants::LAYOUT_NAMESPACE
+        field_detail[Constants::TYPE] = Constants::LIST_NAMESPACE
         field_detail[Constants::STRUCTURE_NAME] = Constants::COMMENTS_NAMESPACE
         field_detail[Constants::LOOKUP] = true
         return
@@ -561,7 +603,7 @@ module Util
         field_detail[Constants::MODULE] = module_name
       end
 
-      if data_type.downcase == Constants::LOOKUP.downcase
+      if data_type.downcase == Constants::LOOKUP.downcase 
         module_name = field_instance.lookup.module
         if !module_name.nil? && (module_name.downcase != Constants::SE_MODULE.downcase)
           field_detail[Constants::MODULE] = module_name
@@ -576,13 +618,8 @@ module Util
       get_fields_info(module_name) if !module_name.nil? && !module_name.empty?
       field_detail[Constants::NAME] = key_name
     end
-
-    def self.get_modules
-      @@sync_lock.synchronize do
-        @@api_supported_module = get_modules_api_names(nil)
-      end
-    end
-    def self.get_modules_api_names(header)
+   
+    def self.get_modules(header)
       api_names = {}
       header_map = HeaderMap.new
       unless header.nil?
@@ -601,7 +638,12 @@ module Util
           if response_object.is_a? Modules::ResponseWrapper
             modules = response_object.modules
             modules.each do |module_ins|
-              api_names[module_ins.api_name.downcase] = module_ins.generated_type.value if module_ins.api_supported
+              if module_ins.api_supported
+                module_details = {}
+                module_details[Constants::API_NAME]=module_ins.api_name
+                module_details[Constants::GENERATED_TYPE]=module_ins.generated_type.value 
+                api_names[module_ins.api_name.downcase] =module_details
+              end
             end
           elsif response_object.is_a? Modules::APIException
             error_response = {}
@@ -610,6 +652,15 @@ module Util
             error_response[Constants::MESSAGE] = response_object.message.value
             raise SDKException.new(Constants::API_EXCEPTION, nil, error_response)
           end
+        end
+      end
+      if header.nil?
+        begin
+          initializer = Initializer.get_initializer
+          resoures_folder_path = initializer.resources_path + '/' + Constants::RESOURCES
+          Dir.mkdir resoures_folder_path unless File.exist? resoures_folder_path
+          record_field_details_path = get_record_json_file_path()
+          write_module_meta_data(record_field_details_path, api_names)
         end
       end
       api_names
@@ -631,6 +682,70 @@ module Util
         end
       end
       false
+    end
+
+    def self.verify_photo_support(module_api_name)
+      @@sync_lock.synchronize do
+        begin
+          module_api_name = verify_module_api_name(module_api_name)
+          if Constants::PHOTO_SUPPORTED_MODULES.include? module_api_name.downcase
+            return true
+          end
+          modules = get_module_names()
+
+          if modules.key? module_api_name.downcase || !modules[module_api_name.downcase].nil?
+            module_meta_data = modules[module_api_name.downcase]
+
+            if module_meta_data.key? Constants::GENERATED_TYPE && module_meta_data[Constants::GENERATED_TYPE] != Constants::GENERATED_TYPE_CUSTOM
+                raise SDKException.new(Constants::UPLOAD_PHOTO_UNSUPPORTED_ERROR,Constants::UPLOAD_PHOTO_UNSUPPORTED_MESSAGE + module_api_name)
+            end
+          end
+        rescue SDKException => e
+          raise e
+        rescue StandardError => e
+          ex = SDKException.new(nil, Constants::EXCEPTION, nil, e)
+          SDKLog::SDKLogger.severe(Constants::EXCEPTION, ex)
+          raise ex
+        end
+        return true 
+      end
+    end
+    
+    def self.get_module_names()
+      module_data = {}
+      initializer = Initializer.get_initializer
+      resoures_folder_path = initializer.resources_path + '/' + Constants::RESOURCES
+      Dir.mkdir resoures_folder_path unless File.exist? resoures_folder_path
+
+      record_field_details_path = get_record_json_file_path()
+
+      call_get_modules = false
+      if File.exists? record_field_details_path
+        json = JSON.parse(File.read(record_field_details_path))
+        if !json.key? Constants::SDK_MODULE_METADATA
+          call_get_modules = true
+        elsif json[Constants::SDK_MODULE_METADATA].nil? || json[Constants::SDK_MODULE_METADATA].length == 0
+          call_get_modules = true
+        end
+      else
+        call_get_modules = true
+      end
+      if call_get_modules
+        module_data = get_modules(nil)
+        write_module_meta_data(record_field_details_path, module_data)
+        return module_data
+      end
+      record_field_details_json = JSON.parse(File.read(record_field_details_path))
+      module_data = record_field_details_json[Constants::SDK_MODULE_METADATA]
+      return module_data
+    end
+
+    def self.write_module_meta_data(record_field_details_path, module_data)
+      field_details_json = (File.exist? record_field_details_path) ? JSON.parse(File.read(record_field_details_path)):{}
+      field_details_json[Constants::SDK_MODULE_METADATA] = module_data
+      File.open(record_field_details_path, 'w') do |f|
+        f.write(field_details_json.to_json)
+      end
     end
 
     def self.get_related_list_details(module_api_name)

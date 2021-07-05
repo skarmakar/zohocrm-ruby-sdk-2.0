@@ -3,6 +3,7 @@ require_relative '../parameter_map'
 require_relative '../exception/sdk_exception'
 require_relative '../util/api_response'
 require_relative '../util/common_api_handler'
+require_relative '../util/utility'
 require_relative '../util/constants'
 
 module ContactRoles
@@ -150,8 +151,125 @@ module ContactRoles
       handler_instance.api_call(ActionHandler.name, 'application/json')
     end
 
+      # The method to get all contact roles of deal
+      # @param deal_id [Integer] A Integer
+      # @param param_instance [ParameterMap] An instance of ParameterMap
+      # @return An instance of APIResponse
+    # @raise SDKException
+    def get_all_contact_roles_of_deal(deal_id, param_instance=nil)
+      if !deal_id.is_a? Integer
+        raise SDKException.new(Constants::DATA_TYPE_ERROR, 'KEY: deal_id EXPECTED TYPE: Integer', nil, nil)
+      end
+      if param_instance!=nil and !param_instance.is_a? ParameterMap
+        raise SDKException.new(Constants::DATA_TYPE_ERROR, 'KEY: param_instance EXPECTED TYPE: ParameterMap', nil, nil)
+      end
+      handler_instance = Handler::CommonAPIHandler.new
+      api_path = ''
+      api_path = api_path + '/crm/v2/Deals/'
+      api_path = api_path + deal_id.to_s
+      api_path = api_path + '/Contact_Roles'
+      handler_instance.api_path = api_path
+      handler_instance.http_method = Constants::REQUEST_METHOD_GET
+      handler_instance.category_method = 'READ'
+      handler_instance.param = param_instance
+      Util::Utility.get_fields("Contacts")
+      handler_instance.module_api_name = "Contacts"
+      require_relative 'record_response_handler'
+      handler_instance.api_call(RecordResponseHandler.name, 'application/json')
+    end
+
+      # The method to get contact role of deal
+      # @param contact_id [Integer] A Integer
+      # @param deal_id [Integer] A Integer
+      # @return An instance of APIResponse
+    # @raise SDKException
+    def get_contact_role_of_deal(contact_id, deal_id)
+      if !contact_id.is_a? Integer
+        raise SDKException.new(Constants::DATA_TYPE_ERROR, 'KEY: contact_id EXPECTED TYPE: Integer', nil, nil)
+      end
+      if !deal_id.is_a? Integer
+        raise SDKException.new(Constants::DATA_TYPE_ERROR, 'KEY: deal_id EXPECTED TYPE: Integer', nil, nil)
+      end
+      handler_instance = Handler::CommonAPIHandler.new
+      api_path = ''
+      api_path = api_path + '/crm/v2/Deals/'
+      api_path = api_path + deal_id.to_s
+      api_path = api_path + '/Contact_Roles/'
+      api_path = api_path + contact_id.to_s
+      handler_instance.api_path = api_path
+      handler_instance.http_method = Constants::REQUEST_METHOD_GET
+      handler_instance.category_method = 'READ'
+      Util::Utility.get_fields("Contacts")
+      handler_instance.module_api_name = "Contacts"
+      require_relative 'record_response_handler'
+      handler_instance.api_call(RecordResponseHandler.name, 'application/json')
+    end
+
+      # The method to add contact role to deal
+      # @param contact_id [Integer] A Integer
+      # @param deal_id [Integer] A Integer
+      # @param request [RecordBodyWrapper] An instance of RecordBodyWrapper
+      # @return An instance of APIResponse
+    # @raise SDKException
+    def add_contact_role_to_deal(contact_id, deal_id, request)
+      if !contact_id.is_a? Integer
+        raise SDKException.new(Constants::DATA_TYPE_ERROR, 'KEY: contact_id EXPECTED TYPE: Integer', nil, nil)
+      end
+      if !deal_id.is_a? Integer
+        raise SDKException.new(Constants::DATA_TYPE_ERROR, 'KEY: deal_id EXPECTED TYPE: Integer', nil, nil)
+      end
+      if request!=nil and !request.is_a? RecordBodyWrapper
+        raise SDKException.new(Constants::DATA_TYPE_ERROR, 'KEY: request EXPECTED TYPE: RecordBodyWrapper', nil, nil)
+      end
+      handler_instance = Handler::CommonAPIHandler.new
+      api_path = ''
+      api_path = api_path + '/crm/v2/Deals/'
+      api_path = api_path + deal_id.to_s
+      api_path = api_path + '/Contact_Roles/'
+      api_path = api_path + contact_id.to_s
+      handler_instance.api_path = api_path
+      handler_instance.http_method = Constants::REQUEST_METHOD_PUT
+      handler_instance.category_method = 'UPDATE'
+      handler_instance.content_type = 'application/json'
+      handler_instance.request = request
+      require_relative 'record_action_handler'
+      handler_instance.api_call(RecordActionHandler.name, 'application/json')
+    end
+
+      # The method to remove contact role from deal
+      # @param contact_id [Integer] A Integer
+      # @param deal_id [Integer] A Integer
+      # @return An instance of APIResponse
+    # @raise SDKException
+    def remove_contact_role_from_deal(contact_id, deal_id)
+      if !contact_id.is_a? Integer
+        raise SDKException.new(Constants::DATA_TYPE_ERROR, 'KEY: contact_id EXPECTED TYPE: Integer', nil, nil)
+      end
+      if !deal_id.is_a? Integer
+        raise SDKException.new(Constants::DATA_TYPE_ERROR, 'KEY: deal_id EXPECTED TYPE: Integer', nil, nil)
+      end
+      handler_instance = Handler::CommonAPIHandler.new
+      api_path = ''
+      api_path = api_path + '/crm/v2/Deals/'
+      api_path = api_path + deal_id.to_s
+      api_path = api_path + '/Contact_Roles/'
+      api_path = api_path + contact_id.to_s
+      handler_instance.api_path = api_path
+      handler_instance.http_method = Constants::REQUEST_METHOD_DELETE
+      handler_instance.category_method = Constants::REQUEST_METHOD_DELETE
+      require_relative 'record_action_handler'
+      handler_instance.api_call(RecordActionHandler.name, 'application/json')
+    end
+
     class DeleteContactRolesParam
       @@ids = Param.new('ids', 'com.zoho.crm.api.ContactRoles.DeleteContactRolesParam')
+      def self.ids
+        @@ids
+      end
+    end
+
+    class GetAllContactRolesOfDealParam
+      @@ids = Param.new('ids', 'com.zoho.crm.api.ContactRoles.GetAllContactRolesOfDealParam')
       def self.ids
         @@ids
       end

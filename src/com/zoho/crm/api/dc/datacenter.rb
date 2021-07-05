@@ -9,11 +9,12 @@ module DC
     end
 
     class Environment
-      attr_reader :accounts_url, :url, :file_upload_url
-      def initialize(url, accounts_url, file_upload_url)
+      attr_reader :accounts_url, :url, :file_upload_url,:name
+      def initialize(url, accounts_url, file_upload_url, name)
         @url = url
         @accounts_url = accounts_url
         @file_upload_url = file_upload_url
+        @name = name
       end
     end
   end

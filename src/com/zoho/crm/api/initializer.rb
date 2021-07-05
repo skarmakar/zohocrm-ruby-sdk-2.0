@@ -7,8 +7,7 @@ require_relative 'util/constants'
 
 # This class to initialize Zoho CRM SDK.
 class Initializer
-  attr_accessor :json_details, :user, :environment, :store, :token, :initializer, :local, :sdk_config, :resources_path, :request_proxy
-
+  attr_accessor :json_details,:user, :environment, :store, :token, :initializer, :local, :sdk_config, :resources_path, :request_proxy
   @@json_details = nil
 
   Thread.current['initi'] = nil
@@ -17,7 +16,7 @@ class Initializer
     @@json_details
   end
 
-  def self.initialize(user, environment, token, store, sdk_config, resources_path, log = nil, request_proxy = nil)
+  def self.initialize(user:, environment:, token:, store:, sdk_config:, resources_path:, log: nil, request_proxy: nil)
     error = {}
 
     require_relative 'user_signature'
@@ -27,7 +26,7 @@ class Initializer
 
       error[Constants::ERROR_HASH_EXPECTED_TYPE] = UserSignature
 
-      raise SDKException.new(Constants::INITIALIZATION_ERROR, Constants::USERSIGNATURE_ERROR_MESSAGE, error, nil)
+      raise SDKException.new(Constants::INITIALIZATION_ERROR, Constants::USER_SIGNATURE_ERROR_MESSAGE, error, nil)
 
     end
 
@@ -75,12 +74,20 @@ class Initializer
 
     end
 
+    if !request_proxy.nil? && !sdk_config.is_a?(RequestProxy)
+
+      raise SDKException.new(Constants::INITIALIZATION_ERROR, Constants::REQUEST_PROXY_ERROR, nil, nil)
+    end
+
     if resources_path.nil? || resources_path.empty?
       raise SDKException.new(Constants::INITIALIZATION_ERROR, Constants::RESOURCE_PATH_ERROR_MESSAGE, nil, nil)
     end
 
-    log = SDKLog::Log.initialize(Levels::INFO, File.join(Dir.pwd, Constants::LOGFILE_NAME)) if log.nil? 
+    if !File.directory?(resources_path)
+      raise SDKException.new(Constants::INITIALIZATION_ERROR, Constants::RESOURCE_PATH_INVALID_ERROR_MESSAGE, nil, nil)
+    end
 
+    log = SDKLog::Log.initialize(level: Levels::INFO, path: File.join(Dir.pwd, Constants::LOGFILE_NAME)) if log.nil? 
     SDKLog::SDKLogger.initialize(log)
 
     @@initializer = Initializer.new
@@ -109,7 +116,10 @@ class Initializer
   end
 
   def self.get_JSONDetails
-    JSON.parse(File.open(File.join(File.dirname(File.expand_path(__FILE__)), '../../../../' + Constants::JSON_DETAILS_FILE_PATH)).read)
+    if @@json_details.nil? || @@json_details.length == 0
+      return JSON.parse(File.open(File.join(File.dirname(File.expand_path(__FILE__)), '../../../../' + Constants::JSON_DETAILS_FILE_PATH)).read)
+    end
+    @@json_details
   rescue StandardError => e
     raise SDKException.new(nil, Constants::EXCEPTION_JSONDETAILS, nil, e)
   end
@@ -120,21 +130,26 @@ class Initializer
     @@initializer
   end
 
-  def self.switch_user(user, environment, token, sdk_config, request_proxy = nil)
+  def self.switch_user(user:nil, environment:nil, token:nil, sdk_config:nil, request_proxy: nil)
+    
+    if @@initializer.nil?
+      raise SDKException.new(Constants::SDK_UNINITIALIZATION_ERROR, Constants::SDK_UNINITIALIZATION_MESSAGE)
+    end
+
     require_relative 'user_signature'
 
-    unless user.is_a?(UserSignature)
+    if !user.nil? and !user.is_a?(UserSignature)
       error[Constants::ERROR_HASH_FIELD] = 'user'
 
       error[Constants::ERROR_HASH_EXPECTED_TYPE] = UserSignature
 
-      raise SDKException.new(Constants::SWITCH_USER_ERROR, Constants::USERSIGNATURE_ERROR_MESSAGE, error, nil)
+      raise SDKException.new(Constants::SWITCH_USER_ERROR, Constants::USER_SIGNATURE_ERROR_MESSAGE, error, nil)
 
     end
 
     require_relative '../../crm/api/dc/datacenter'
 
-    unless environment.is_a?(DC::DataCenter::Environment)
+    if !environment.nil? and !environment.is_a?(DC::DataCenter::Environment)
       error[Constants::ERROR_HASH_FIELD] = 'environment'
 
       error[Constants::ERROR_HASH_EXPECTED_TYPE] = DC::DataCenter::Environment
@@ -145,7 +160,7 @@ class Initializer
 
     require_relative '../../api/authenticator/token'
 
-    unless token.is_a?(Authenticator::Token)
+    if !token.nil? and !token.is_a?(Authenticator::Token)
       error[Constants::ERROR_HASH_FIELD] = 'token'
 
       error[Constants::ERROR_HASH_EXPECTED_TYPE] = Authenticator::Token
@@ -154,9 +169,20 @@ class Initializer
 
     end
 
+    require_relative 'request_proxy'
+
+    if !request_proxy.nil? and !request_proxy.is_a?(RequestProxy)
+      error[Constants::ERROR_HASH_FIELD] = 'request_proxy'
+
+      error[Constants::ERROR_HASH_EXPECTED_TYPE] = RequestProxy
+
+      raise SDKException.new(Constants::SWITCH_USER_ERROR, Constants::REQUEST_PROXY_ERROR_MESSAGE, error, nil)
+
+    end
+
     require_relative 'sdk_config'
 
-    unless sdk_config.is_a?(SDKConfig)
+    if !sdk_config.nil? and !sdk_config.is_a?(SDKConfig)
       error[Constants::ERROR_HASH_FIELD] = 'sdk_config'
 
       error[Constants::ERROR_HASH_EXPECTED_TYPE] = SDKConfig
@@ -167,13 +193,15 @@ class Initializer
 
     initializer = Initializer.new
 
-    initializer.user = user
+    previous_initializer = Initializer.get_initializer
 
-    initializer.environment = environment
+    initializer.user = user.nil? ? previous_initializer.user : user
 
-    initializer.sdk_config = sdk_config
+    initializer.environment = environment.nil? ? previous_initializer.environment : environment
 
-    initializer.token = token
+    initializer.sdk_config = sdk_config.nil? ? previous_initializer.sdk_config : sdk_config
+
+    initializer.token = token.nil? ? previous_initializer.token : token
 
     initializer.store = @@initializer.store
 

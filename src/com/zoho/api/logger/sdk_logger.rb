@@ -4,15 +4,16 @@ require 'logger'
 
 module SDKLog
   class Log
-    attr_accessor :level, :path
-    def initialize(level, path)
+    attr_reader :level , :path
+    def initialize(level,path)
       @level = level
       @path = path
     end
 
-    def self.initialize(level, path)
+    def self.initialize(level:, path:nil)
       Log.new(level, path)
     end
+   
   end
 
   class SDKLogger
@@ -22,15 +23,23 @@ module SDKLog
     @@logger = nil
 
     def self.initialize(log)
-      if(log.level != Levels::OFF) && !log.path.nil? && log.path.length > 0 
-        File.new(log.path, 'w') unless File.exist? log.path if log.path != nil
-        sdk_logger = WEBrick::BasicLog.new(log.path, @@log_levels_precedence[log.level])
-      elsif !log.level.nil? and log.level == Levels::OFF
-        sdk_logger = WEBrick::BasicLog.new(nil, @@log_levels_precedence[log.level])
+
+      if !log.level.nil? && log.level != Levels::OFF && !log.path.nil? && log.path.length > 0 
+        if @@log_levels_precedence.key? log.level
+          File.new(log.path, 'w') unless File.exist? log.path if log.path != nil
+          sdk_logger = WEBrick::BasicLog.new(log.path, @@log_levels_precedence[log.level])
+        end
       end
+
+      if !log.level.nil? && log.path.nil?
+        if  @@log_levels_precedence.key? log.level
+          sdk_logger = WEBrick::BasicLog.new(nil, @@log_levels_precedence[log.level])
+        end
+      end
+
       @@logger = sdk_logger
     rescue StandardError => e
-      raise SDKException.new(nil, Constants::SDK_LOGGER_INITIALIZE, nil, e)
+      raise SDKException.new(nil, Constants::LOGGER_INITIALIZATION_ERROR, nil, e)
     end
 
     def self.info(message)
@@ -50,6 +59,7 @@ module SDKLog
     end
 
     def self.severe(message, exception = nil)
+     
       message = message + exception.to_s + exception.backtrace.join("\n") unless exception.nil?
       @@logger&.fatal(Time.new.to_s + ' ' + message)
     end
