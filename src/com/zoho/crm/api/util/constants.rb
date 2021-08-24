@@ -1,635 +1,639 @@
 # frozen_string_literal: true
 
-# This class uses the SDK constants name reference.
-class Constants
-  API_NAME = 'api_name'
+module ZOHOCRMSDK
+  # This class uses the SDK constants name reference.
+  class Constants
+    API_NAME = 'api_name'
 
-  RESPONSECODE_OK = 200
+    RESPONSECODE_OK = 200
 
-  FILE_ERROR = 'FILE ERROR'
+    FILE_ERROR = 'FILE ERROR'
 
-  FILE_DOES_NOT_EXISTS = 'file does not exists'
+    FILE_DOES_NOT_EXISTS = 'file does not exists'
 
-  JSON_FILE_EXTENSION = '.json'
+    JSON_FILE_EXTENSION = '.json'
 
-  RESPONSECODE_CREATED = 201
+    RESPONSECODE_CREATED = 201
 
-  RESPONSECODE_ACCEPTED = 202
+    RESPONSECODE_ACCEPTED = 202
 
-  RESPONSECODE_NO_CONTENT = 204
+    RESPONSECODE_NO_CONTENT = 204
 
-  RESPONSECODE_MOVED_PERMANENTLY = 301
+    RESPONSECODE_MOVED_PERMANENTLY = 301
 
-  RESPONSECODE_MOVED_TEMPORARILY = 302
+    RESPONSECODE_MOVED_TEMPORARILY = 302
 
-  RESPONSECODE_NOT_MODIFIED = 304
+    RESPONSECODE_NOT_MODIFIED = 304
 
-  RESPONSECODE_BAD_REQUEST = 400
+    RESPONSECODE_BAD_REQUEST = 400
 
-  JSON_DETAILS_ERROR = "ERROR IN READING JSONDETAILS FILE"
+    JSON_DETAILS_ERROR = "ERROR IN READING JSONDETAILS FILE"
 
-  RESPONSECODE_AUTHORIZATION_ERROR = 401
+    RESPONSECODE_AUTHORIZATION_ERROR = 401
 
-  RESPONSECODE_FORBIDDEN = 403
+    RESPONSECODE_FORBIDDEN = 403
 
-  RESPONSECODE_NOT_FOUND = 404
+    RESPONSECODE_NOT_FOUND = 404
 
-  RESPONSECODE_METHOD_NOT_ALLOWED = 405
+    RESPONSECODE_METHOD_NOT_ALLOWED = 405
 
-  RESPONSECODE_REQUEST_ENTITY_TOO_LARGE = 413
+    RESPONSECODE_REQUEST_ENTITY_TOO_LARGE = 413
 
-  RESPONSECODE_UNSUPPORTED_MEDIA_TYPE = 415
+    RESPONSECODE_UNSUPPORTED_MEDIA_TYPE = 415
 
-  RESPONSECODE_TOO_MANY_REQUEST = 429
+    RESPONSECODE_TOO_MANY_REQUEST = 429
 
-  RESPONSECODE_INTERNAL_SERVER_ERROR = 500
+    RESPONSECODE_INTERNAL_SERVER_ERROR = 500
 
-  RESPONSECODE_INVALID_INPUT = 0
+    RESPONSECODE_INVALID_INPUT = 0
 
-  REQUEST_METHOD_GET = 'GET'
+    REQUEST_METHOD_GET = 'GET'
 
-  REQUEST_METHOD_POST = 'POST'
+    REQUEST_METHOD_POST = 'POST'
 
-  REQUEST_METHOD_PUT = 'PUT'
+    REQUEST_METHOD_PUT = 'PUT'
 
-  REQUEST_METHOD_DELETE = 'DELETE'
+    REQUEST_METHOD_DELETE = 'DELETE'
 
-  REQUEST_METHOD_PATCH = 'PATCH'
+    REQUEST_METHOD_PATCH = 'PATCH'
 
-  GRANT_TYPE = 'grant_type'
+    GRANT_TYPE = 'grant_type'
 
-  GRANT_TYPE_AUTH_CODE = 'authorization_code'
+    GRANT_TYPE_AUTH_CODE = 'authorization_code'
 
-  ACCESS_TOKEN = 'access_token'
+    ACCESS_TOKEN = 'access_token'
 
-  EXPIRES_IN = 'expires_in'
+    EXPIRES_IN = 'expires_in'
 
-  HREF = 'href'
+    HREF = 'href'
 
-  EXPIRES_IN_SEC = 'expires_in_sec'
+    EXPIRES_IN_SEC = 'expires_in_sec'
 
-  REFRESH_TOKEN = 'refresh_token'
+    REFRESH_TOKEN = 'refresh_token'
 
-  CLIENT_ID = 'client_id'
+    CLIENT_ID = 'client_id'
 
-  CLIENT_SECRET = 'client_secret'
+    CLIENT_SECRET = 'client_secret'
 
-  REDIRECT_URI = 'redirect_uri'
+    REDIRECT_URI = 'redirect_uri'
 
-  REDIRECT_URL = 'redirect_url'
+    REDIRECT_URL = 'redirect_url'
 
-  URL = 'URL'
+    URL = 'URL'
 
-  HEADERS = 'headers'
+    HEADERS = 'headers'
 
-  PARAMS = 'PARAMS'
+    PARAMS = 'PARAMS'
 
-  OAUTH_HEADER_PREFIX = 'Zoho-oauthtoken '
+    OAUTH_HEADER_PREFIX = 'Zoho-oauthtoken '
 
-  AUTHORIZATION = 'Authorization'
+    AUTHORIZATION = 'Authorization'
 
-  CODE = 'code'
+    CODE = 'code'
 
-  STATUS = 'status'
+    STATUS = 'status'
 
-  MESSAGE = 'message'
+    MESSAGE = 'message'
 
-  HTTP = 'http'
+    HTTP = 'http'
 
-  DEFAULT_MODULENAME_VS_APINAME = {
+    DEFAULT_MODULENAME_VS_APINAME = {
 
-    "leads" => "Leads",
+      "leads" => "Leads",
 
-    "contacts" => "Contacts",
+      "contacts" => "Contacts",
 
-    "accounts" => "Accounts",
+      "accounts" => "Accounts",
 
-    "deals" => "Deals",
+      "deals" => "Deals",
 
-    "tasks" => "Tasks",
+      "tasks" => "Tasks",
 
-    "events" => "Events",
+      "events" => "Events",
 
-    "activities" => "Activities",
+      "activities" => "Activities",
 
-    "calls" => "Calls",
+      "calls" => "Calls",
 
-    "products" => "Products",
+      "products" => "Products",
 
-    "quotes" => "Quotes",
+      "quotes" => "Quotes",
 
-    "sales_orders" => "Sales_Orders",
+      "sales_orders" => "Sales_Orders",
 
-    "purchase_orders" => "Purchase_Orders",
+      "purchase_orders" => "Purchase_Orders",
 
-    "invoices" => "Invoices",
+      "invoices" => "Invoices",
 
-    "campaigns" => "Campaigns",
+      "campaigns" => "Campaigns",
 
-    "vendors" => "Vendors",
+      "vendors" => "Vendors",
 
-    "price_books" => "Price_Books",
+      "price_books" => "Price_Books",
 
-    "cases" => "Cases",
+      "cases" => "Cases",
 
-    "solutions" => "Solutions",
+      "solutions" => "Solutions",
 
-    "visits" => "Visits",
+      "visits" => "Visits",
 
-    "approvals" => "Approvals",
+      "approvals" => "Approvals",
 
-    "notes" => "Notes",
+      "notes" => "Notes",
 
-    "attachments" => "Attachments",
+      "attachments" => "Attachments",
 
-    "actions_performed" => "Actions_Performed",
+      "actions_performed" => "Actions_Performed",
 
-}
+  }
 
-  USER_AGENT = "Mozilla/5.0"
-  
-  USER_AGENT_KEY = "user-agent"
-
-  CONTENT_API_URL = 'content.zohoapis.com'
-
-  INVALID_URL_ERROR = 'Invalid URI Error'
-
-  ZOHO_SDK = 'X-ZOHO-SDK'
-
-  SDK_VERSION = '2.0.0'
-
-  ZOHO_API_VERSION = '2.0'
-
-  SET_CONTENT_TYPE_HEADER = ['/crm/bulk/v2/read', '/crm/bulk/v2/write']
-
-  RESOURCE_PATH_INVALID_ERROR_MESSAGE = "Resource Path MUST be a valid directory."
-
-  IS_GENERATE_REQUEST_BODY =[REQUEST_METHOD_POST,REQUEST_METHOD_PUT,REQUEST_METHOD_PATCH]
-
-  REQUIRED_IN_UPDATE = 'required_in_update'
-
-  PHOTO = "photo"
+    USER_AGENT = "Mozilla/5.0"
     
-  CRM = "crm"
-  
-  PHOTO_SUPPORTED_MODULES = ["leads", "contacts", "accounts", "products", "vendors", "deals", "cases", "solutions"]
+    USER_AGENT_KEY = "user-agent"
 
-  PARAMETER_NULL_ERROR = 'NULL PARAMETER ERROR'
+    CONTENT_API_URL = 'content.zohoapis.com'
 
-  HEADER_NULL_ERROR = 'NULL HEADER ERROR'
+    INVALID_URL_ERROR = 'Invalid URI Error'
 
-  PARAM_NAME_NULL_ERROR = 'NULL PARAM NAME ERROR'
+    ZOHO_SDK = 'X-ZOHO-SDK'
 
-  HEADER_NAME_NULL_ERROR = 'NULL HEADER NAME ERROR'
+    SDK_VERSION = '3.0.0'
 
-  PARAM_NAME_NULL_ERROR_MESSAGE = 'Param Name MUST NOT be null'
+    ZOHO_API_VERSION = '2.0'
 
-  AUTO_REFRESH_FIELDS_ERROR_MESSAGE = 'autoRefreshFields MUST NOT be null.'
+    SET_CONTENT_TYPE_HEADER = ['/crm/bulk/v2/read', '/crm/bulk/v2/write']
 
-  RESOURCE_PATH_ERROR_MESSAGE = 'Resource Path MUST NOT be null/empty.'
+    RESOURCE_PATH_INVALID_ERROR_MESSAGE = "Resource Path MUST be a valid directory."
 
-  HEADER_NAME_NULL_ERROR_MESSAGE = 'Header Name MUST NOT be null'
+    IS_GENERATE_REQUEST_BODY = [REQUEST_METHOD_POST,REQUEST_METHOD_PUT,REQUEST_METHOD_PATCH]
 
-  NULL_VALUE = 'null'
+    REQUIRED_IN_UPDATE = 'required_in_update'
 
-  HEADER_OR_PARAM_NAME = 'HEADER OR PARAM'
-
-  UNSUPPORTED_IN_API = 'API UNSUPPORTED OPERATION'
-
-  UNSUPPORTED_IN_API_MESSAGE = 'Operation is not supported by API'
-
-  NULL_VALUE_ERROR_MESSAGE = ' MUST NOT be null'
-
-  PARAM_INSTANCE_NULL_ERROR = 'Param Instance MUST NOT be null'
-
-  HEADER_INSTANCE_NULL_ERROR = 'Header Instance MUST NOT be null'
-
-  SDK_UNINITIALIZATION_ERROR = 'SDK UNINITIALIZED ERROR'
-
-  SDK_UNINITIALIZATION_MESSAGE = 'SDK is uninitialized'
-
-  MYSQL_HOST = 'localhost'
-
-  REFRESH_TOKEN_MESSAGE = 'Access Token has expired. Hence refreshing.'
-
-  MYSQL_DATABASE_NAME = 'zohooauth'
-
-  MYSQL_USER_NAME = 'root'
-
-  MYSQL_PORT_NUMBER = '3306'
-
-  UNDERSCORE = '_'
-
-  RELATED_LISTS = 'Related_Lists'
-
-  USER_MAIL = 'user_mail'
-
-  EXPIRY_TIME = 'expiry_time'
-
-  PROXY_SETTINGS = "Proxy settings - "
-	
-	PROXY_HOST = "Host: "
-	
-	PROXY_PORT = "Port: "
-	
-	PROXY_USER = "User: "
-	
-	PROXY_DOMAIN = "Domain: "
-
-  USER_MAIL_NULL_ERROR = 'USER MAIL NULL ERROR'
-
-  USER_MAIL_NULL_ERROR_MESSAGE = 'User Mail MUST NOT be null. Use setUserMail() to set value.'
-
-  SAVE_TOKEN_ERROR = 'Exception in saving tokens'
-
-  GET_TOKEN_ERROR = 'Exception in getting access token'
-
-  GET_TOKEN_DB_ERROR = 'Exception in get_token - DBStore:'
-
-  GET_TOKEN_BY_ID_DB_ERROR = "Exception in getTokenById - DBStore : Given ID is invalid"
-
-  GET_TOKEN_BY_ID_FILE_ERROR = "Exception in getTokenById - FileStore : Given ID is invalid"
-
-  GET_TOKENS_DB_ERROR = 'Exception in get_tokens - DBStore:'
-
-  DELETE_TOKEN_DB_ERROR = 'Exception in delete_token - DBStore:'
-
-  DELETE_TOKENS_DB_ERROR = 'Exception in delete_tokens - DBStore:'
-
-  SAVE_TOKEN_DB_ERROR = 'Exception in save_token - DBStore:'
-
-  GET_TOKEN_FILE_ERROR = 'Exception in get_token - FileStore:'
-
-  LOGGER_INITIALIZATION_ERROR = "Exception in Logger Initialization : "
-
-  REFRESH_SINGLE_MODULE_FIELDS_ERROR = 'Exception in refreshing fields of module : '
-
-  REFRESH_ALL_MODULE_FIELDS_ERROR = 'Exception in refreshing fields of all modules : '
-
-  FILEBODYWRAPPER = 'FileBodyWrapper'
-
-  ACCOUNTS = 'Accounts'
-
-  FORMULA = 'formula'
-
-  CALLS = 'Calls'
-
-  SKIP_MANDATORY = 'skip_mandatory'
-
-  CALL_DURATION = 'Call_Duration'
-
-  EXCEPTION = 'exception'
-
-  SAVE_TOKEN_FILE_ERROR = 'Exception in save_token - FileStore:'
-
-  SAVE_TOKENS_FILE_ERROR = 'Exception in save_tokens - FileStore:'
-
-  DELETE_TOKEN_FILE_ERROR = 'Exception in delete_token - FileStore:'
-
-  DELETE_TOKENS_FILE_ERROR = 'Exception in delete_tokens - FileStore:'
-
-  DELETE_MODULE_FROM_FIELDFILE_ERROR = 'Exception in deleting module from Fields file'
-
-  DELETE_FIELD_FILE_ERROR = 'Exception in deleting Current User Fields file'
-
-  DELETE_FIELD_FILES_ERROR = 'Exception in deleting all Fields files'
-
-  FIELDS_LAST_MODIFIED_TIME = 'FIELDS-LAST-MODIFIED-TIME'
-
-  MODULES_TO_SKIP = ['Activities']
-
-  ACTIVITIES = 'Activities'
-
-  GIVEN_VALUE = "given-value"
-
-  GENERATED_TYPE = "generated_type"
-
-  GENERATED_TYPE_CUSTOM = "custom"
-
-  UPLOAD_PHOTO_UNSUPPORTED_MESSAGE = "Photo Upload Operation is not supported by the module: "
-
-  SDK_MODULE_METADATA = "SDK-MODULE-METADATA"
-
-  INVALID_MODULE_API_NAME_ERROR = "INVALID MODULE API NAME ERROR"
-
-  PROVIDE_VALID_MODULE_API_NAME = "PROVIDE VALID MODULE API NAME: "
-
-  UPLOAD_PHOTO_UNSUPPORTED_ERROR = "UPLOAD PHOTO UNSUPPORTED MODULE"
+    PHOTO = "photo"
+      
+    CRM = "crm"
     
-  INVALID_MODULE  = "INVALID_MODULE"
+    PHOTO_SUPPORTED_MODULES = ["leads", "contacts", "accounts", "products", "vendors", "deals", "cases", "solutions"]
 
-  INVENTORY_MODULES = %w[invoices sales_orders purchase_orders quotes]
+    PARAMETER_NULL_ERROR = 'NULL PARAMETER ERROR'
 
-  KEYS_TO_SKIP = %w[Created_Time Modified_Time Created_By Modified_By Tag]
+    HEADER_NULL_ERROR = 'NULL HEADER ERROR'
 
-  ATTACHMENT_ID = 'attachment_id'
+    PARAM_NAME_NULL_ERROR = 'NULL PARAM NAME ERROR'
 
-  FILE_ID = 'file_id'
+    HEADER_NAME_NULL_ERROR = 'NULL HEADER NAME ERROR'
 
-  TOKEN_STORE = 'TOKEN_STORE'
+    PARAM_NAME_NULL_ERROR_MESSAGE = 'Param Name MUST NOT be null'
 
-  GRANT_TOKEN = 'grant_token'
+    AUTO_REFRESH_FIELDS_ERROR_MESSAGE = 'autoRefreshFields MUST NOT be null.'
 
-  INPUT_ERROR = 'INPUT_ERROR'
+    RESOURCE_PATH_ERROR_MESSAGE = 'Resource Path MUST NOT be null/empty.'
 
-  TOKEN = 'token'
+    HEADER_NAME_NULL_ERROR_MESSAGE = 'Header Name MUST NOT be null'
 
-  TYPE = 'type'
+    NULL_VALUE = 'null'
 
-  ID = 'id'
+    HEADER_OR_PARAM_NAME = 'HEADER OR PARAM'
 
-  REQUEST_CATEGORY_READ = 'READ'
+    UNSUPPORTED_IN_API = 'API UNSUPPORTED OPERATION'
 
-  REQUEST_CATEGORY_CREATE = 'CREATE'
+    UNSUPPORTED_IN_API_MESSAGE = 'Operation is not supported by API'
 
-  REQUEST_CATEGORY_UPDATE = 'UPDATE'
+    NULL_VALUE_ERROR_MESSAGE = ' MUST NOT be null'
 
-  MODULEPACKAGENAME = 'modulePackageName'
-  
-  MYSQL_TABLE_NAME = "oauthtoken"
+    PARAM_INSTANCE_NULL_ERROR = 'Param Instance MUST NOT be null'
 
-  INITIALIZATION_SUCCESSFUL = 'Initialization successful'
+    HEADER_INSTANCE_NULL_ERROR = 'Header Instance MUST NOT be null'
 
-  EXCEPTION_JSONDETAILS = 'Exception in loading JSONDetails :'
+    SDK_UNINITIALIZATION_ERROR = 'SDK UNINITIALIZED ERROR'
 
-  INITIALIZATION_SWITCHED = 'Initialization switched '
+    SDK_UNINITIALIZATION_MESSAGE = 'SDK is uninitialized'
 
-  API_EXCEPTION = 'API_EXCEPTION'
+    MYSQL_HOST = 'localhost'
 
-  SET_API_URL_EXCEPTION = 'Exception in setting API URL : '
+    REFRESH_TOKEN_MESSAGE = 'Access Token has expired. Hence refreshing.'
 
-  AUTHENTICATION_EXCEPTION = 'Exception in authenticating current request : '
+    MYSQL_DATABASE_NAME = 'zohooauth'
 
-  FORM_REQUEST_EXCEPTION = 'Exception in forming request body :'
+    MYSQL_USER_NAME = 'root'
 
-  API_CALL_EXCEPTION = 'Exception in current API call execution : '
+    MYSQL_PORT_NUMBER = '3306'
 
-  EXCEPTION_IS_KEY_MODIFIED = 'Exception in calling isKeyModified : '
+    UNDERSCORE = '_'
 
-  GIVEN_LENGTH = 'given-length'
+    RELATED_LISTS = 'Related_Lists'
 
-  FOR_EMAIL_ID = 'for Email Id : '
+    USER_MAIL = 'user_mail'
 
-  IN_ENVIRONMENT = ' in Environment : '
+    EXPIRY_TIME = 'expiry_time'
 
-  MODULEDETAILS = 'moduleDetails'
+    PROXY_SETTINGS = "Proxy settings - "
+    
+    PROXY_HOST = "Host: "
+    
+    PROXY_PORT = "Port: "
+    
+    PROXY_USER = "User: "
+    
+    PROXY_DOMAIN = "Domain: "
 
-  EXPECTED_TOKEN_TYPES = 'REFRESH, GRANT'
+    USER_MAIL_NULL_ERROR = 'USER MAIL NULL ERROR'
 
-  ARRAY = 'Array'
+    USER_MAIL_NULL_ERROR_MESSAGE = 'User Mail MUST NOT be null. Use setUserMail() to set value.'
 
-  HASH = 'Hash'
+    SAVE_TOKEN_ERROR = 'Exception in saving tokens'
 
-  CASES = 'cases'
+    GET_TOKEN_ERROR = 'Exception in getting access token'
 
-  CANT_DISCLOSE = " ## can't disclose ## "
+    GET_TOKEN_DB_ERROR = 'Exception in get_token - DBStore:'
 
-  APPLICATION_FORM_URLENCODED = 'application/x-www-form-urlencoded'
+    GET_TOKEN_BY_ID_DB_ERROR = "Exception in getTokenById - DBStore : Given ID is invalid"
 
-  MULTIPART_FORM_DATA = 'multipart/form-data'
+    GET_TOKEN_BY_ID_FILE_ERROR = "Exception in getTokenById - FileStore : Given ID is invalid"
 
-  INVALID_CLIENT_ERROR = 'INVALID CLIENT ERROR'
+    GET_TOKENS_DB_ERROR = 'Exception in get_tokens - DBStore:'
 
-  ERROR_KEY = 'error'
+    DELETE_TOKEN_DB_ERROR = 'Exception in delete_token - DBStore:'
 
-  ERROR_HASH_FIELD = 'field'
+    DELETE_TOKENS_DB_ERROR = 'Exception in delete_tokens - DBStore:'
 
-  ERROR_HASH_EXPECTED_TYPE = 'expected_type'
+    SAVE_TOKEN_DB_ERROR = 'Exception in save_token - DBStore:'
 
-  ERROR_HASH_CLASS = 'class'
+    GET_TOKEN_FILE_ERROR = 'Exception in get_token - FileStore:'
 
-  CONTENT_TYPE = 'content-type'
+    LOGGER_INITIALIZATION_ERROR = "Exception in Logger Initialization : "
 
-  INSTANCE_NUMBER = 'instance-number'
+    REFRESH_SINGLE_MODULE_FIELDS_ERROR = 'Exception in refreshing fields of module : '
 
-  ERROR_HASH_MEMBER = 'member'
+    REFRESH_ALL_MODULE_FIELDS_ERROR = 'Exception in refreshing fields of all modules : '
 
-  NAME = 'name'
+    FILEBODYWRAPPER = 'FileBodyWrapper'
 
-  DATA_TYPE = { 'Map' => 'Hash','String'=>'String' ,'List' => 'Array', 'Boolean' => 'boolean', 'Integer' => 'Integer', 'Long' => 'Integer', 'Hash' => 'Hash', 'HashMap' => 'Hash', 'Double' => 'Float','Float' => 'Float','DateTime'=>'DateTime','Date'=>'Date' }
+    ACCOUNTS = 'Accounts'
 
-  DATA_TYPE_ERROR = 'DATA TYPE ERROR'
+    FORMULA = 'formula'
 
-  TYPE_ERROR = 'type-error'
+    CALLS = 'Calls'
 
-  USER_SIGNATURE_ERROR = 'USERSIGNATURE ERROR'
+    SKIP_MANDATORY = 'skip_mandatory'
 
-  USER_EMAIL_REGEX_ERROR = 'UserSignature Email Regex Mismatch'
+    CALL_DURATION = 'Call_Duration'
 
-  VALUES = 'values'
+    EXCEPTION = 'exception'
 
-  ACCEPTED_VALUES = 'accepted-values'
+    SAVE_TOKEN_FILE_ERROR = 'Exception in save_token - FileStore:'
 
-  UNACCEPTED_VALUES_ERROR = 'UNACCEPTED VALUES ERROR'
+    SAVE_TOKENS_FILE_ERROR = 'Exception in save_tokens - FileStore:'
 
-  MIN_LENGTH = 'min-length'
+    DELETE_TOKEN_FILE_ERROR = 'Exception in delete_token - FileStore:'
 
-  MAX_LENGTH = 'max-length'
+    DELETE_TOKENS_FILE_ERROR = 'Exception in delete_tokens - FileStore:'
 
-  ERROR_HASH_MAXIMUM_LENGTH = 'maximum-length'
+    DELETE_MODULE_FROM_FIELDFILE_ERROR = 'Exception in deleting module from Fields file'
 
-  MAXIMUM_LENGTH_ERROR = 'MAXIMUM LENGTH ERROR'
+    DELETE_FIELD_FILE_ERROR = 'Exception in deleting Current User Fields file'
 
-  ERROR_HASH_MINIMUM_LENGTH = 'minimum-length'
+    DELETE_FIELD_FILES_ERROR = 'Exception in deleting all Fields files'
 
-  MINIMUM_LENGTH_ERROR = 'MINIMUM LENGTH ERROR'
+    FIELDS_LAST_MODIFIED_TIME = 'FIELDS-LAST-MODIFIED-TIME'
 
-  REGEX = 'regex'
+    MODULES_TO_SKIP = ['Activities']
 
-  REGEX_MISMATCH_ERROR = 'REGEX MISMATCH ERROR'
+    ACTIVITIES = 'Activities'
 
-  UNIQUE = 'unique'
+    GIVEN_VALUE = "given-value"
 
-  UNIQUE_KEY_ERROR = 'UNIQUE KEY ERROR'
+    GENERATED_TYPE = "generated_type"
 
-  FIRST_INDEX = 'first-index'
+    GENERATED_TYPE_CUSTOM = "custom"
 
-  NEXT_INDEX = 'next-index'
+    UPLOAD_PHOTO_UNSUPPORTED_MESSAGE = "Photo Upload Operation is not supported by the module: "
 
-  INDEX = 'index'
+    SDK_MODULE_METADATA = "SDK-MODULE-METADATA"
 
-  GIVEN_TYPE = 'given-type'
+    INVALID_MODULE_API_NAME_ERROR = "INVALID MODULE API NAME ERROR"
 
-  INTEGER = 'Integer'
+    PROVIDE_VALID_MODULE_API_NAME = "PROVIDE VALID MODULE API NAME: "
 
-  LONG = 'Long'
+    UPLOAD_PHOTO_UNSUPPORTED_ERROR = "UPLOAD PHOTO UNSUPPORTED MODULE"
+      
+    INVALID_MODULE  = "INVALID_MODULE"
 
-  DOUBLE = 'Double'
+    INVENTORY_MODULES = %w[invoices sales_orders purchase_orders quotes]
 
-  FLOAT = 'Float'
+    KEYS_TO_SKIP = %w[Created_Time Modified_Time Created_By Modified_By Tag]
 
-  BOOLEAN = 'Boolean'
+    ATTACHMENT_ID = 'attachment_id'
 
-  OBJECT = 'Object'
+    FILE_ID = 'file_id'
 
-  STRING = 'String'
+    TOKEN_STORE = 'TOKEN_STORE'
 
-  DATE_NAMESPACE = 'Date'
+    GRANT_TOKEN = 'grant_token'
 
-  DATETIME_NAMESPACE = 'DateTime'
+    INPUT_ERROR = 'INPUT_ERROR'
 
-  FILE_NAMESPACE = 'com.zoho.crm.api.util.StreamWrapper'
+    TOKEN = 'token'
 
-  DOUBLE_COLON = '::'
+    TYPE = 'type'
 
-  DOT = '.'
+    ID = 'id'
 
-  AT = '@'
+    REQUEST_CATEGORY_READ = 'READ'
 
-  RESOURCES = 'resources'
+    REQUEST_CATEGORY_CREATE = 'CREATE'
 
-  PRIMARY = 'primary'
+    REQUEST_CATEGORY_UPDATE = 'UPDATE'
 
-  STREAM_WRAPPER_CLASS_PATH = 'com.zoho.crm.api.util.StreamWrapper'
+    MODULEPACKAGENAME = 'modulePackageName'
+    
+    MYSQL_TABLE_NAME = "oauthtoken"
 
-  CONTENT_DISPOSITION = 'content-disposition'
+    INITIALIZATION_SUCCESSFUL = 'Initialization successful'
 
-  PACKAGE_PREFIX = 'com.zoho.crm.api.'
+    EXCEPTION_JSONDETAILS = 'Exception in loading JSONDetails :'
 
-  INTERFACE = 'interface'
+    INITIALIZATION_SWITCHED = 'Initialization switched '
 
-  CLASSES = 'classes'
+    API_EXCEPTION = 'API_EXCEPTION'
 
-  READ_ONLY = 'read-only'
+    SET_API_URL_EXCEPTION = 'Exception in setting API URL : '
 
-  PRODUCT_DETAILS = 'Product_Details'
+    AUTHENTICATION_EXCEPTION = 'Exception in authenticating current request : '
 
-  PRICING_DETAILS = 'Pricing_Details'
+    FORM_REQUEST_EXCEPTION = 'Exception in forming request body :'
 
-  COMMENTS = 'Comments'
+    API_CALL_EXCEPTION = 'Exception in current API call execution : '
 
-  COMMENTS_NAMESPACE = 'com.zoho.crm.api.record.Comment'
+    EXCEPTION_IS_KEY_MODIFIED = 'Exception in calling isKeyModified : '
 
-  SOLUTIONS = 'solutions'
+    GIVEN_LENGTH = 'given-length'
 
-  IS_KEY_MODIFIED = 'is_key_modified'
+    FOR_EMAIL_ID = 'for Email Id : '
 
-  SUBFORM = 'subform'
+    IN_ENVIRONMENT = ' in Environment : '
 
-  LOOKUP = 'lookup'
+    MODULEDETAILS = 'moduleDetails'
 
-  REQUIRED = 'required'
+    EXPECTED_TOKEN_TYPES = 'REFRESH, GRANT'
 
-  PRIMARY_KEY_ERROR = 'Value missing or Nil for required key(s) : '
+    ARRAY = 'Array'
 
-  MANDATORY_KEY_ERROR = 'missing or Nil Value for mandatory key : '
+    HASH = 'Hash'
 
-  MANDATORY_VALUE_ERROR = 'MANDATORY VALUE MISSING OR NIL ERROR'
+    CASES = 'cases'
 
-  LIST_NAMESPACE = 'List'
+    CANT_DISCLOSE = " ## can't disclose ## "
 
-  PRICE_BOOKS = 'Price_Books'
+    APPLICATION_FORM_URLENCODED = 'application/x-www-form-urlencoded'
 
-  LINE_TAX = '$line_tax'
+    MULTIPART_FORM_DATA = 'multipart/form-data'
 
-  RECURRING_ACTIVITY_NAMESPACE = 'com.zoho.crm.api.record.RecurringActivity'
+    INVALID_CLIENT_ERROR = 'INVALID CLIENT ERROR'
 
-  REMINDER_NAMESPACE = 'com.zoho.crm.api.record.Reminder'
+    ERROR_KEY = 'error'
 
-  REMINDAT_NAMESPACE = 'com.zoho.crm.api.record.RemindAt'
+    ERROR_HASH_FIELD = 'field'
 
-  FIELD_FILE_NAMESPACE = 'com.zoho.crm.api.record.FileDetails'
+    ERROR_HASH_EXPECTED_TYPE = 'expected_type'
 
-  INVENTORY_LINE_ITEMS = 'com.zoho.crm.api.record.InventoryLineItems'
+    ERROR_HASH_CLASS = 'class'
 
-  PARTICIPANT_API_NAME = 'Participants'
+    CONTENT_TYPE = 'content-type'
 
-  PRICINGDETAILS = 'com.zoho.crm.api.record.PricingDetails'
+    INSTANCE_NUMBER = 'instance-number'
 
-  PARTICIPANTS = 'com.zoho.crm.api.record.Participants'
+    ERROR_HASH_MEMBER = 'member'
 
-  LINE_TAX_NAMESPACE = 'com.zoho.crm.api.record.LineTax'
+    NAME = 'name'
 
-  LAYOUT = 'Layout'
+    DATA_TYPE = { 'Map' => 'Hash','String'=>'String' ,'List' => 'Array', 'Boolean' => 'boolean', 'Integer' => 'Integer', 'Long' => 'Integer', 'Hash' => 'Hash', 'HashMap' => 'Hash', 'Double' => 'Float','Float' => 'Float','DateTime'=>'DateTime','Date'=>'Date' }
 
-  LAYOUT_NAMESPACE = 'com.zoho.crm.api.layouts.Layout'
+    DATA_TYPE_ERROR = 'DATA TYPE ERROR'
 
-  EVENTS = 'Events'
+    TYPE_ERROR = 'type-error'
 
-  MAP_NAMESPACE = 'Map'
+    USER_SIGNATURE_ERROR = 'USERSIGNATURE ERROR'
 
-  HASH_MAP_NAMESPACE = 'HashMap'
+    USER_EMAIL_REGEX_ERROR = 'UserSignature Email Regex Mismatch'
 
-  STRUCTURE_NAME = 'structure_name'
+    VALUES = 'values'
 
-  KEYS = 'keys'
+    ACCEPTED_VALUES = 'accepted-values'
 
-  RECORD_NAMESPACE = 'com.zoho.crm.api.record.Record'
+    UNACCEPTED_VALUES_ERROR = 'UNACCEPTED VALUES ERROR'
 
-  USER_NAMESPACE = 'com.zoho.crm.api.users.User'
+    MIN_LENGTH = 'min-length'
 
-  MODULE_NAMESPACE = 'com.zoho.crm.api.modules.Module'
+    MAX_LENGTH = 'max-length'
 
-  CHOICE_NAMESPACE = 'com.zoho.crm.api.util.Choice'
+    ERROR_HASH_MAXIMUM_LENGTH = 'maximum-length'
 
-  JSON_DETAILS_FILE_PATH = 'resources/JSONDetails.json'
+    MAXIMUM_LENGTH_ERROR = 'MAXIMUM LENGTH ERROR'
 
-  DETAILS = 'details'
+    ERROR_HASH_MINIMUM_LENGTH = 'minimum-length'
 
-  KEY_VALUES = 'key_values'
+    MINIMUM_LENGTH_ERROR = 'MINIMUM LENGTH ERROR'
 
-  KEY_MODIFIED = 'key_modified'
+    REGEX = 'regex'
 
-  LOGFILE_NAME = 'SDKLogs.log'
+    REGEX_MISMATCH_ERROR = 'REGEX MISMATCH ERROR'
 
-  INITIALIZATION_ERROR = 'INITIALIZATION ERROR'
+    UNIQUE = 'unique'
 
-  REQUEST_PROXY_ERROR = 'REQUEST PROXY ERROR'
+    UNIQUE_KEY_ERROR = 'UNIQUE KEY ERROR'
 
-  HOST_ERROR_MESSAGE = 'Host MUST NOT be null.'
+    FIRST_INDEX = 'first-index'
 
-  PORT_ERROR_MESSAGE = 'Port MUST NOT be null.'
+    NEXT_INDEX = 'next-index'
 
-  REQUEST_PROXY_ERROR_MESSAGE = "request_proxy must be instance of Request Proxy"
-  
-  USER_SIGNATURE_ERROR_MESSAGE = "user must be instance of UserSignature."
-	
-  ENVIRONMENT_ERROR_MESSAGE = "environment must be instance of Environment."
-	
-  SDK_CONFIG_ERROR_MESSAGE = "sdk_config must be instance of sdkConfig."
+    INDEX = 'index'
 
-  TOKEN_ERROR_MESSAGE = "token must be instance of Token."
-	
-  STORE_ERROR_MESSAGE = "store must be instance of Store."
+    GIVEN_TYPE = 'given-type'
 
-  INITIALIZATION_EXCEPTION = 'Exception in initialization'
+    INTEGER = 'Integer'
 
-  SWITCH_USER_EXCEPTION = 'Exception in Switch user'
-  
-  SWITCH_USER_ERROR = "SWITCH USER ERROR"
+    LONG = 'Long'
 
-  EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+    DOUBLE = 'Double'
 
-  EMAIL = 'email'
+    FLOAT = 'Float'
 
-  SE_MODULE = 'se_module'
+    BOOLEAN = 'Boolean'
 
-  USER_ERROR = 'USER ERROR'
+    OBJECT = 'Object'
 
-  MODULES = 'modules'
+    STRING = 'String'
 
-  MODULE = 'module'
+    DATE_NAMESPACE = 'Date'
 
-  DELETE = 'delete'
+    DATETIME_NAMESPACE = 'DateTime'
 
-  NOTES = 'Notes'
+    FILE_NAMESPACE = 'com.zoho.crm.api.util.StreamWrapper'
 
-  CONSENT_LOOKUP = "consent_lookup"
+    DOUBLE_COLON = '::'
 
-  ATTACHMENTS = '$attachments'
+    DOT = '.'
 
-  ATTACHMENTS_NAMESPACE = 'com.zoho.crm.api.attachments.Attachment'
+    AT = '@'
 
-  PICKLIST = 'picklist'
+    RESOURCES = 'resources'
 
-  CONSENT_NAMESPACE = 'com.zoho.crm.api.record.Consent'
+    PRIMARY = 'primary'
 
-  INVALID_TOKEN_ERROR = "INVALID TOKEN ERROR"
+    STREAM_WRAPPER_CLASS_PATH = 'com.zoho.crm.api.util.StreamWrapper'
 
-  NO_ACCESS_TOKEN_ERROR = "ACCESS TOKEN IS NOT PRESENT IN RESPONSE"
+    CONTENT_DISPOSITION = 'content-disposition'
 
-  CLIENT_ID_NULL_ERROR_MESSAGE = "ClientID MUST NOT be null"
+    PACKAGE_PREFIX = 'com.zoho.crm.api.'
 
-  CLIENT_SECRET_NULL_ERROR_MESSAGE = "ClientSecret MUST NOT be null"
+    INTERFACE = 'interface'
 
+    CLASSES = 'classes'
+
+    READ_ONLY = 'read-only'
+
+    PRODUCT_DETAILS = 'Product_Details'
+
+    PRICING_DETAILS = 'Pricing_Details'
+
+    COMMENTS = 'Comments'
+
+    COMMENTS_NAMESPACE = 'com.zoho.crm.api.record.Comment'
+
+    SOLUTIONS = 'solutions'
+
+    IS_KEY_MODIFIED = 'is_key_modified'
+
+    SUBFORM = 'subform'
+
+    LOOKUP = 'lookup'
+
+    REQUIRED = 'required'
+
+    PRIMARY_KEY_ERROR = 'Value missing or Nil for required key(s) : '
+
+    MANDATORY_KEY_ERROR = 'missing or Nil Value for mandatory key : '
+
+    MANDATORY_VALUE_ERROR = 'MANDATORY VALUE MISSING OR NIL ERROR'
+
+    LIST_NAMESPACE = 'List'
+
+    PRICE_BOOKS = 'Price_Books'
+
+    LINE_TAX = '$line_tax'
+
+    RECURRING_ACTIVITY_NAMESPACE = 'com.zoho.crm.api.record.RecurringActivity'
+
+    REMINDER_NAMESPACE = 'com.zoho.crm.api.record.Reminder'
+
+    REMINDAT_NAMESPACE = 'com.zoho.crm.api.record.RemindAt'
+
+    FIELD_FILE_NAMESPACE = 'com.zoho.crm.api.record.FileDetails'
+
+    INVENTORY_LINE_ITEMS = 'com.zoho.crm.api.record.InventoryLineItems'
+
+    PARTICIPANT_API_NAME = 'Participants'
+
+    PRICINGDETAILS = 'com.zoho.crm.api.record.PricingDetails'
+
+    PARTICIPANTS = 'com.zoho.crm.api.record.Participants'
+
+    LINE_TAX_NAMESPACE = 'com.zoho.crm.api.record.LineTax'
+
+    LAYOUT = 'Layout'
+
+    LAYOUT_NAMESPACE = 'com.zoho.crm.api.layouts.Layout'
+
+    EVENTS = 'Events'
+
+    MAP_NAMESPACE = 'Map'
+
+    HASH_MAP_NAMESPACE = 'HashMap'
+
+    STRUCTURE_NAME = 'structure_name'
+
+    KEYS = 'keys'
+
+    RECORD_NAMESPACE = 'com.zoho.crm.api.record.Record'
+
+    USER_NAMESPACE = 'com.zoho.crm.api.users.User'
+
+    MODULE_NAMESPACE = 'com.zoho.crm.api.modules.Module'
+
+    CHOICE_NAMESPACE = 'com.zoho.crm.api.util.Choice'
+
+    JSON_DETAILS_FILE_PATH = 'resources/JSONDetails.json'
+
+    DETAILS = 'details'
+
+    KEY_VALUES = 'key_values'
+
+    KEY_MODIFIED = 'key_modified'
+
+    LOGFILE_NAME = 'SDKLogs.log'
+
+    INITIALIZATION_ERROR = 'INITIALIZATION ERROR'
+
+    REQUEST_PROXY_ERROR = 'REQUEST PROXY ERROR'
+
+    HOST_ERROR_MESSAGE = 'Host MUST NOT be null.'
+
+    PORT_ERROR_MESSAGE = 'Port MUST NOT be null.'
+
+    REQUEST_PROXY_ERROR_MESSAGE = "request_proxy must be instance of Request Proxy"
+    
+    USER_SIGNATURE_ERROR_MESSAGE = "user must be instance of UserSignature."
+    
+    ENVIRONMENT_ERROR_MESSAGE = "environment must be instance of Environment."
+    
+    SDK_CONFIG_ERROR_MESSAGE = "sdk_config must be instance of sdkConfig."
+
+    TOKEN_ERROR_MESSAGE = "token must be instance of Token."
+    
+    STORE_ERROR_MESSAGE = "store must be instance of Store."
+
+    INITIALIZATION_EXCEPTION = 'Exception in initialization'
+
+    SWITCH_USER_EXCEPTION = 'Exception in Switch user'
+    
+    SWITCH_USER_ERROR = "SWITCH USER ERROR"
+
+    EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+
+    EMAIL = 'email'
+
+    SE_MODULE = 'se_module'
+
+    USER_ERROR = 'USER ERROR'
+
+    MODULES = 'modules'
+
+    MODULE = 'module'
+
+    DELETE = 'delete'
+
+    NOTES = 'Notes'
+
+    CONSENT_LOOKUP = "consent_lookup"
+
+    ATTACHMENTS = '$attachments'
+
+    ATTACHMENTS_NAMESPACE = 'com.zoho.crm.api.attachments.Attachment'
+
+    PICKLIST = 'picklist'
+
+    CONSENT_NAMESPACE = 'com.zoho.crm.api.record.Consent'
+
+    INVALID_TOKEN_ERROR = "INVALID TOKEN ERROR"
+
+    NO_ACCESS_TOKEN_ERROR = "ACCESS TOKEN IS NOT PRESENT IN RESPONSE"
+
+    CLIENT_ID_NULL_ERROR_MESSAGE = "ClientID MUST NOT be null"
+
+    CLIENT_SECRET_NULL_ERROR_MESSAGE = "ClientSecret MUST NOT be null"
+
+    SKIP_MODULES = ['deals']
+
+  end
 end
