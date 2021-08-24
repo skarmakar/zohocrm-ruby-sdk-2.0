@@ -7,7 +7,7 @@ require 'version'
 Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.6'
   spec.name = 'ZOHOCRMSDK2_0'
-  spec.version       = ZOHOCRMSDK2_0::VERSION
+  spec.version       = ZOHOCRMSDK::VERSION
   spec.authors       = ['ZOHO CRM API TEAM']
   spec.email         = ['support@zohocrm.com']
   spec.metadata["source_code_uri"] = "https://github.com/zoho/zohocrm-ruby-sdk-2.0"
@@ -24,5 +24,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'multipart-post', '~> 2.0'
   spec.add_runtime_dependency 'rest-client', '~> 2.0'
   spec.add_runtime_dependency 'uri', '~> 0.10'
-  spec.add_runtime_dependency 'mysql2', '= 0.5.2'
+  spec.add_runtime_dependency 'mysql2', '~> 0.5.2'
 end
