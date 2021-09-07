@@ -8,7 +8,7 @@ module ZOHOCRMSDK
     # @param message A String containing the Exception error message.
     # @param details A hash containing the error response.
     # @param cause An Exception class instance.
-    def initialize(code, message, details = nil, cause = nil)
+    def initialize(code:, message:, details: nil, cause: nil)
       @code = code
       @message = message
       @cause = cause

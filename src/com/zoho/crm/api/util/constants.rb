@@ -157,7 +157,7 @@ module ZOHOCRMSDK
 
     ZOHO_SDK = 'X-ZOHO-SDK'
 
-    SDK_VERSION = '3.0.0'
+    SDK_VERSION = '4.0.0'
 
     ZOHO_API_VERSION = '2.0'
 
@@ -571,7 +571,9 @@ module ZOHOCRMSDK
 
     KEY_MODIFIED = 'key_modified'
 
-    LOGFILE_NAME = 'SDKLogs.log'
+    LOG_FILE_NAME = 'sdk_logs.log'
+
+    TOKEN_FILE = "sdk_tokens.txt"
 
     INITIALIZATION_ERROR = 'INITIALIZATION ERROR'
 
@@ -635,5 +637,8 @@ module ZOHOCRMSDK
 
     SKIP_MODULES = ['deals']
 
+    RUBY = "ruby_"
+
+    OAUTH_MANDATORY_KEYS = ["grant_token", "refresh_token", "id", "access_token"]
   end
 end

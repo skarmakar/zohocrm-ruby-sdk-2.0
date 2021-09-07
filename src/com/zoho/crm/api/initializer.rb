@@ -17,7 +17,7 @@ module ZOHOCRMSDK
       @@json_details
     end
 
-    def self.initialize(user:, environment:, token:, store:, sdk_config:, resources_path:, log: nil, request_proxy: nil)
+    def self.initialize(user:, environment:, token:, store: nil, sdk_config: nil, resources_path: nil, log: nil, request_proxy: nil)
       error = {}
 
       require_relative 'user_signature'
@@ -55,7 +55,7 @@ module ZOHOCRMSDK
 
       require_relative '../../api/authenticator/store/token_store'
 
-      unless store.is_a?(Store::TokenStore)
+      if !store.nil? && !store.is_a?(Store::TokenStore)
         error[Constants::ERROR_HASH_FIELD] = 'store'
 
         error[Constants::ERROR_HASH_EXPECTED_TYPE] = Store::TokenStore
@@ -66,7 +66,7 @@ module ZOHOCRMSDK
 
       require_relative 'sdk_config'
 
-      unless sdk_config.is_a?(SDKConfig)
+      if !sdk_config.nil? && !sdk_config.is_a?(SDKConfig)
         error[Constants::ERROR_HASH_FIELD] = 'sdk_config'
 
         error[Constants::ERROR_HASH_EXPECTED_TYPE] = SDKConfig
@@ -75,20 +75,30 @@ module ZOHOCRMSDK
 
       end
 
-      if !request_proxy.nil? && !sdk_config.is_a?(RequestProxy)
-
+      if !request_proxy.nil? && !request_proxy.is_a?(RequestProxy)
         raise SDKException.new(Constants::INITIALIZATION_ERROR, Constants::REQUEST_PROXY_ERROR, nil, nil)
       end
 
-      if resources_path.nil? || resources_path.empty?
-        raise SDKException.new(Constants::INITIALIZATION_ERROR, Constants::RESOURCE_PATH_ERROR_MESSAGE, nil, nil)
+      if store.nil?
+        require_relative '../../api/authenticator/store/file_store'
+
+        store = Store::FileStore.new(File.join(Dir.pwd, Constants::TOKEN_FILE))
+      
+      end
+      
+      if sdk_config.nil?
+        sdk_config = SDKConfig.new()
+      end
+      
+      if resources_path.nil?
+        resources_path = Dir.pwd
       end
 
       if !File.directory?(resources_path)
         raise SDKException.new(Constants::INITIALIZATION_ERROR, Constants::RESOURCE_PATH_INVALID_ERROR_MESSAGE, nil, nil)
       end
 
-      log = SDKLog::Log.initialize(level: Levels::INFO, path: File.join(Dir.pwd, Constants::LOGFILE_NAME)) if log.nil? 
+      log = SDKLog::Log.initialize(level: Levels::INFO, path: File.join(Dir.pwd, Constants::LOG_FILE_NAME)) if log.nil? 
       SDKLog::SDKLogger.initialize(log)
 
       @@initializer = Initializer.new
