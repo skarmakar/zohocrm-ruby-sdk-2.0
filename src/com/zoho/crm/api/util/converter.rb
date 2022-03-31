@@ -56,9 +56,10 @@ module ZOHOCRMSDK
         var_type = nil
         check = true
 
-        unless value.nil? 
+        unless value.nil?
+          var_type = value.class.name
           if key_details.key? Constants::INTERFACE and key_details[Constants::INTERFACE] == true
-            json_details = Initializer.get_initializer.json_details
+            json_details = Initializer.json_details
             interface_details = json_details[key_details[Constants::STRUCTURE_NAME]]
             classes = interface_details[Constants::CLASSES]
             check = false
@@ -100,6 +101,11 @@ module ZOHOCRMSDK
         elsif (type.downcase != Constants::OBJECT.downcase)
           if type.downcase != Util::Utility.path_to_package(var_type).downcase 
             check = false
+          end
+          if !check
+            if Object.const_get(var_type).new.is_a? Object.const_get(Util::Utility.class_to_load(type))
+              check = true
+            end
           end
         end
         if !check 

@@ -25,7 +25,7 @@ module ZOHOCRMSDK
       end
 
       if value.nil?
-        raise SDKException.new(Constants::PARAMETER_NULL_ERROR, header_name + Constants::NULL_VALUE_ERROR_MESSAGE)
+        raise SDKException.new(Constants::PARAMETER_NULL_ERROR, param_name + Constants::NULL_VALUE_ERROR_MESSAGE)
       end
 
       param_value = nil
