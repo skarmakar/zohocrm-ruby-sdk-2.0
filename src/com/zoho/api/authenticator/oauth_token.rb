@@ -12,7 +12,7 @@ module ZOHOCRMSDK
   module Authenticator
     # This class gets and refreshes the tokens based on the expiry time.
     class OAuthToken < Token
-      attr_accessor :client_id , :client_secret ,:redirect_url ,:grant_token,:refresh_token, :access_token ,:user_mail ,:id ,:expires_in
+      attr_accessor :client_id, :client_secret, :redirect_url, :grant_token, :refresh_token, :access_token, :user_mail, :id, :expires_in
       @@sync_lock = Monitor.new
 
       # Creates an OAuthToken class instance with the specified parameters.
@@ -27,7 +27,7 @@ module ZOHOCRMSDK
         error = {}
 
         if grant_token.nil? && refresh_token.nil? && id.nil? && access_token.nil?
-          raise SDKException.new(code:Constants::MANDATORY_VALUE_ERROR, message:Constants::MANDATORY_KEY_ERROR, details:Constants::OAUTH_MANDATORY_KEYS)
+          raise SDKException.new(Constants::MANDATORY_VALUE_ERROR, Constants::MANDATORY_KEY_ERROR, Constants::OAUTH_MANDATORY_KEYS)
         end
 
         if id.nil? and access_token.nil?
@@ -185,7 +185,7 @@ module ZOHOCRMSDK
 
           generate_id()
 
-          store.save_token(user,self)
+          store.save_token(user, self)
         rescue SDKException => e
           raise e
         rescue StandardError => e

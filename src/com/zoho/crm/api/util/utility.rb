@@ -591,8 +591,9 @@ module ZOHOCRMSDK
           return
         end
         field_detail[Constants::LOOKUP] = true if data_type.downcase.include? Constants::LOOKUP
-        field_detail[Constants::SKIP_MANDATORY] = true if data_type.downcase.include? Constants::CONSENT_LOOKUP
-
+        if (data_type.downcase.include? Constants::CONSENT_LOOKUP) || (data_type.downcase.include? Constants::OWNER_LOOKUP)
+          field_detail[Constants::SKIP_MANDATORY] = true
+        end
         if @@apitype_vs_structurename.include? data_type
           field_detail[Constants::STRUCTURE_NAME] = @@apitype_vs_structurename[data_type]
         end

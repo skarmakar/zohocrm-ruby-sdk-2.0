@@ -157,7 +157,7 @@ module ZOHOCRMSDK
 
     ZOHO_SDK = 'X-ZOHO-SDK'
 
-    SDK_VERSION = '4.0.0'
+    SDK_VERSION = '6.0.0'
 
     ZOHO_API_VERSION = '2.0'
 
@@ -167,13 +167,13 @@ module ZOHOCRMSDK
 
     IS_GENERATE_REQUEST_BODY = [REQUEST_METHOD_POST,REQUEST_METHOD_PUT,REQUEST_METHOD_PATCH]
 
-    REQUIRED_IN_UPDATE = 'required_in_update'
+    REQUIRED_IN_UPDATE = 'required-in-update'
 
     PHOTO = "photo"
       
     CRM = "crm"
     
-    PHOTO_SUPPORTED_MODULES = ["leads", "contacts", "accounts", "products", "vendors", "deals", "cases", "solutions"]
+    PHOTO_SUPPORTED_MODULES = ["leads", "contacts", "accounts", "products", "vendors"]
 
     PARAMETER_NULL_ERROR = 'NULL PARAMETER ERROR'
 
@@ -275,7 +275,7 @@ module ZOHOCRMSDK
 
     CALLS = 'Calls'
 
-    SKIP_MANDATORY = 'skip_mandatory'
+    SKIP_MANDATORY = 'skip-mandatory'
 
     CALL_DURATION = 'Call_Duration'
 
@@ -640,5 +640,7 @@ module ZOHOCRMSDK
     RUBY = "ruby_"
 
     OAUTH_MANDATORY_KEYS = ["grant_token", "refresh_token", "id", "access_token"]
+
+    OWNER_LOOKUP = "ownerlookup"
   end
 end
