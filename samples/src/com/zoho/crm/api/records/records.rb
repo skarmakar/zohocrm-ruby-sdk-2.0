@@ -638,6 +638,15 @@ class Records
     # Get instance of Record Class
     record = ZOHOCRMSDK::Record::Record.new
 
+    #Get the instance of ApplyFEatureExecution Class
+    apply_feature_execution= ZOHOCRMSDK::Record::ApplyFeatureExecution.new
+
+    apply_feature_execution.name ="layout_rules"
+    #List to hold ApplyFeatureExecution instances
+    apply_feature_list=[]
+    # add ApplyFeatureExecution instance to list
+    apply_feature_list.push(apply_feature_execution)
+
     # """
     # Call add_field_value method that takes two arguments
     # 1 -> Call Field "::" and choose the module from the displayed list and press "." and choose the field name from the displayed list.
@@ -742,6 +751,8 @@ class Records
     body_wrapper = ZOHOCRMSDK::Record::BodyWrapper.new
     # Set the list to data in BodyWrapper instance
     body_wrapper.data = records
+    #set list to apply_feature_execution in BodyWrapper instance
+    body_wrapper.apply_feature_execution =apply_feature_list
     # Set the lar_id in BodyWrapper instance
     body_wrapper.lar_id = '213123131'
     #set trigger
@@ -2545,6 +2556,15 @@ class Records
     records = []
     # Get instance of Record Class
     record = ZOHOCRMSDK::Record::Record.new
+    
+    #Get the instance of ApplyFEatureExecution Class
+    apply_feature_execution= ZOHOCRMSDK::Record::ApplyFeatureExecution.new
+
+    apply_feature_execution.name ="layout_rules"
+    #List to hold ApplyFeatureExecution instances
+    apply_feature_list=[]
+    # add ApplyFeatureExecution instance to list
+    apply_feature_list.push(apply_feature_execution)
     # """
     # Call add_field_value method that takes two arguments
     # 1 -> Call Field "::" and choose the module from the displayed list and press "." and choose the field name from the displayed list.
@@ -2651,6 +2671,10 @@ class Records
     body_wrapper = ZOHOCRMSDK::Record::BodyWrapper.new
     # Set the list to data in BodyWrapper instance
     body_wrapper.data = records
+
+    #set list to apply_feature_execution in BodyWrapper instance
+    body_wrapper.apply_feature_execution =apply_feature_list
+
     # Set the lar_id in BodyWrapper instance
     body_wrapper.lar_id = '213123131'
     #set trigger
@@ -2764,6 +2788,15 @@ class Records
     records = []
     # Get instance of Record Class
     record = ZOHOCRMSDK::Record::Record.new
+
+    #Get the instance of ApplyFEatureExecution Class
+    apply_feature_execution= ZOHOCRMSDK::Record::ApplyFeatureExecution.new
+
+    apply_feature_execution.name ="layout_rules"
+    #List to hold ApplyFeatureExecution instances
+    apply_feature_list=[]
+    # add ApplyFeatureExecution instance to list
+    apply_feature_list.push(apply_feature_execution)
     # """
     # Call add_field_value method that takes two arguments
     # 1 -> Call Field "::" and choose the module from the displayed list and press "." and choose the field name from the displayed list.
@@ -2871,6 +2904,8 @@ class Records
     body_wrapper = ZOHOCRMSDK::Record::BodyWrapper.new
     # Set the list to data in BodyWrapper instance
     body_wrapper.data = records
+    #set list to apply_feature_execution in BodyWrapper instance
+    body_wrapper.apply_feature_execution =apply_feature_list
     # Set the lar_id in BodyWrapper instance
     body_wrapper.lar_id = '213123131'
     #set trigger
@@ -3096,6 +3131,15 @@ class Records
     records = []
     # Get instance of Record Class
     record = ZOHOCRMSDK::Record::Record.new
+
+    #Get the instance of ApplyFEatureExecution Class
+    apply_feature_execution= ZOHOCRMSDK::Record::ApplyFeatureExecution.new
+
+    apply_feature_execution.name ="layout_rules"
+    #List to hold ApplyFeatureExecution instances
+    apply_feature_list=[]
+    # add ApplyFeatureExecution instance to list
+    apply_feature_list.push(apply_feature_execution)
     # """
     # Call add_field_value method that takes two arguments
     # 1 -> Call Field "::" and choose the module from the displayed list and press "." and choose the field name from the displayed list.
@@ -3202,6 +3246,8 @@ class Records
     body_wrapper = ZOHOCRMSDK::Record::BodyWrapper.new
     # Set the list to data in BodyWrapper instance
     body_wrapper.data = records
+    #set list to apply_feature_execution in BodyWrapper instance
+    body_wrapper.apply_feature_execution =apply_feature_list
     # Set the lar_id in BodyWrapper instance
     body_wrapper.lar_id = '213123131'
     #set trigger

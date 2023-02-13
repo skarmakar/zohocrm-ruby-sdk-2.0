@@ -157,7 +157,7 @@ module ZOHOCRMSDK
 
     ZOHO_SDK = 'X-ZOHO-SDK'
 
-    SDK_VERSION = '6.0.0'
+    SDK_VERSION = '6.1.0'
 
     ZOHO_API_VERSION = '2.0'
 
